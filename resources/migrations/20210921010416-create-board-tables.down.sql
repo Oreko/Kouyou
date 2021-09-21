@@ -1,0 +1,13 @@
+DROP TABLE IF EXISTS "media";
+--;;
+ALTER TABLE "posts" DROP CONSTRAINT IF EXISTS "media_to_post";
+--;;
+DROP TABLE IF EXISTS "posts";
+--;;
+DROP TRIGGER IF EXISTS post_increment;
+--;;
+DROP FUNCTION IF EXISTS post_id_incrementer();
+--;;
+DROP TABLE IF EXISTS "threads";
+--;;
+DROP TABLE IF EXISTS "boards";
