@@ -1,10 +1,12 @@
-DROP TABLE IF EXISTS "media";
+DROP TRIGGER IF EXISTS tie_media_to_post ON media; 
 --;;
 ALTER TABLE "posts" DROP CONSTRAINT IF EXISTS "media_to_post";
 --;;
+DROP TABLE IF EXISTS "media" CASCADE;
+--;;
 DROP TABLE IF EXISTS "posts";
 --;;
-DROP TRIGGER IF EXISTS post_increment;
+DROP TRIGGER IF EXISTS post_increment ON posts;
 --;;
 DROP FUNCTION IF EXISTS post_id_incrementer();
 --;;
