@@ -1,0 +1,25 @@
+<ul class={{post_class}} id="p{{post_data.post_id}}">
+    <il class=postinfo>
+        {% if not post_data.subject = nil %}
+        <big class=replytitle>
+            <b>{{post_data.subject}}</b>
+        </big>
+        {% endif %}
+    
+        <span class=postername>
+            {% if not post_data.email = nil %}
+                <a href="mailto:{{post.email}}">{{post_data.name}}</a>
+            {% else %}
+                <b>{{post_data.name}}</b>
+            {% endif %}
+        </span>
+    
+        {{post_data.created_at|date:"yyyy-MM-dd HH:mm"}}
+    
+        <a href=#p{{post_data.post_id}}>No.</a>
+        {{post_data.post_id}}
+        {% if is_stickied %} STICKIED {% endif %}
+        {% if is_locked %} LOCKED {% endif %}
+    </il>
+    <il class=postcontent>{{post_data.content}}</il>
+</ul>
