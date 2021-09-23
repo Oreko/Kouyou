@@ -1,33 +1,48 @@
+-- :name get-boards
+-- :doc selects all columns for all boards
+select * from boards
+
 -- :name get-board-by-nick :? :1
--- :doc selects a board indexed by its unique nickname
+-- :doc selects a board indexed by its unique nickname `nick`
 select * from boards where boards.nick = :nick
 
 -- :name get-thread :? :1
--- :doc selects a thread
-select * from threads where thread.id = :id
+-- :doc selects a thread off of primary key `id`
+select * from threads where id = :id
+
+-- :name get-thread-id-by-nick-post :? :1
+-- :doc selects a thread off of `nick` and `post_id`
+select threads.id from threads
+    join (select thread_id from posts 
+    where posts.post_id = :post_id) as p
+    on p.thread_id = threads.id
+    join (select id from boards
+    where boards.nick = :nick) as b
+    on threads.board_id = b.id
 
 -- :name get-board-threads-n :? :*
--- :doc selects `count` threads associated to a board
+-- :doc selects `count` threads associated to a board `id`
 select * from threads
     where threads.board_id = :id
     order by threads.modified_at desc
     limit :count
 
--- :name get-thread-posts :? :*
--- :doc selects all posts associated to a thread id
+-- :name get-non-primary-thread-posts :? :*
+-- :doc selects all non-primary posts associated to a thread `id`
 select * from posts join media
     on posts.media_id = media.id
     where posts.thread_id = :id
+    and posts.is_primary = false
     order by posts.post_id
 
 -- :name get-primary-thread-post :? :1
--- :doc selects the primary post associated to a thread
+-- :doc selects the primary post associated to a thread `id`
 select * from posts
     where posts.thread_id = :id
     and posts.is_primary = true
 
 -- :name get-last-nonprimary-posts-n :? :*
--- :doc selects the last `count` non-primary posts associated to a thread
+-- :doc selects the last `count` non-primary posts associated to a thread `id`
 select * from (select * from posts
     where posts.thread_id = :id
     and posts.is_primary = false
