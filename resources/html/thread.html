@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} Kouyou - /{{board_nick}}/ {% endblock %}
+{% block title %} Title me up bby {% endblock %}
 {% block content %}
 <div class=content>
     <div id=poster>
@@ -43,27 +43,16 @@
     <div class=info>
         {{board_name|capitalize}}
     </div>
-    <ul class=threads>
-        {% if threads|empty? %}
-            No posts found
-        {% else %}
-        {% for thread in threads %}
-        <ul class=thread>
-            {% with post_data=thread.primary
-                post_class="op"
-                is_locked=thread.is_locked
-                is_stickied=thread.is_stickied %}
+    <ul class=thread>
+        {% with post_data=thread.primary post_class="op" %}
+        {% include "templates/post.html" %}
+        {% endwith %}
+
+        {% for post in thread.posts %}
+            {% with post_data=post post_class="reply" %}
             {% include "templates/post.html" %}
             {% endwith %}
-
-            {% for post in thread.posts %}
-                {% with post_data=post post_class="reply" %}
-                {% include "templates/post.html" %}
-                {% endwith %}
-            {% endfor %}
-        </ul>
         {% endfor %}
-        {% endif %}
     </ul>
 </div>
 {% endblock %}

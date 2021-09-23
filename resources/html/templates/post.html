@@ -8,7 +8,7 @@
     
         <span class=postername>
             {% if not post_data.email = nil %}
-                <a href="mailto:{{post.email}}">{{post_data.name}}</a>
+                <a href="mailto:{{post_data.email}}">{{post_data.name}}</a>
             {% else %}
                 <b>{{post_data.name}}</b>
             {% endif %}
@@ -17,9 +17,7 @@
         {{post_data.created_at|date:"yyyy-MM-dd HH:mm"}}
     
         <a href=#p{{post_data.post_id}}>No.</a>
-        {{post_data.post_id}}
-        {% if is_stickied %} STICKIED {% endif %}
-        {% if is_locked %} LOCKED {% endif %}
+        <a href=/boards/{{board_nick}}/res/{{post_data.post_id}}#p{{post_data.post_id}}>{{post_data.post_id}}</a>
     </il>
     <il class=postcontent>{{post_data.content}}</il>
 </ul>
