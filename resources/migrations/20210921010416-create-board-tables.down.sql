@@ -1,5 +1,7 @@
 DROP TRIGGER IF EXISTS tie_media_to_post ON media; 
 --;;
+DROP FUNCTION IF EXISTS tie_media_to_post_fnc();
+--;;
 ALTER TABLE "posts" DROP CONSTRAINT IF EXISTS "media_to_post";
 --;;
 DROP TABLE IF EXISTS "media" CASCADE;

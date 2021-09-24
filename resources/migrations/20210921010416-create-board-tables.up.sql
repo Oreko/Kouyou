@@ -56,13 +56,12 @@ END;
 $$
 --;;
 CREATE TRIGGER post_increment
-    BEFORE INSERT 
-    ON posts
+    BEFORE INSERT ON posts
     FOR EACH ROW
     EXECUTE PROCEDURE post_increment_fnc();
 --;;
 CREATE TABLE "media"
-("id" integer PRIMARY KEY,
+("id" serial PRIMARY KEY,
  "post_id" integer NOT NULL,
  "name" varchar(255) NOT NULL,
  "type" text NOT NULL,
@@ -72,8 +71,17 @@ ALTER TABLE "media" ADD CONSTRAINT "post_to_media" FOREIGN KEY ("post_id") REFER
 --;;
 ALTER TABLE "posts" ADD CONSTRAINT "media_to_post" FOREIGN KEY ("media_id") REFERENCES "media" ("id") ON DELETE SET NULL ON UPDATE CASCADE;
 --;;
+CREATE OR REPLACE FUNCTION tie_media_to_post_fnc() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+AS $$
+BEGIN
+    UPDATE posts SET posts.media_id = NEW.id WHERE posts.id = NEW.post_id;
+    RETURN NEW;
+END;
+$$
+--;;
 CREATE TRIGGER tie_media_to_post
-    AFTER INSERT 
-    ON media
+    AFTER INSERT ON media
     FOR EACH ROW
-    UPDATE posts SET media_id = NEW.id WHERE posts.id = NEW.post_id;
+    EXECUTE PROCEDURE tie_media_to_post_fnc();
