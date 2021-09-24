@@ -22,6 +22,11 @@
    :primary (db/get-primary-thread-post thread_id)
    :posts (vec (db/get-non-primary-thread-posts thread_id))})
 
+(defn create-primary! [params]
+  (let [post_id (db/create-primary! params)]
+    {:id (:id post_id)
+     :primary_id (:post_id (db/get-primary-post-id-from-id post_id))}))
+
 (defn clean-params [{:keys [name email content subject media]}]
   (as-> (if (clojure.string/blank? name) {} {:name name}) params
     (if (clojure.string/blank? email) params (assoc params :email email))

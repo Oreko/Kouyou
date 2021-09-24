@@ -2,11 +2,13 @@
   (:require
    [kouyou.layout :as layout]
    [kouyou.boards :as boards]
+   [kouyou.media :as media]
    [kouyou.db.core :as db]
    [kouyou.middleware :as middleware]
    [reitit.coercion.spec]
-   [ring.util.http-response :as response]
-   [ring.util.response]))
+   [reitit.ring.coercion :as coercion]
+   [reitit.ring.middleware.exception :as exception]
+   [ring.util.response :refer [redirect]]))
 
 ;; https://clojuredocs.org/clojure.core/if-let#example-5797f83ce4b0bafd3e2a04b9
 (defmacro if-let*
@@ -19,7 +21,7 @@
         ~else)
      then)))
 
-(defn board-page [{{:keys [nick flash]} :path-params :as request}]
+(defn board-page [{{:keys [nick]} :path-params :keys [flash] :as request}]
   (if-let [board (db/get-board-by-nick {:nick nick})]
     (layout/render
      request "board.html" (merge {:board_nick nick
@@ -32,27 +34,52 @@
     (layout/error-page {:status 404, :title "404 - Page not found"})))
 
 ;; We're calling too many queries here for the same information - refactor time
-(defn thread-page [{{:keys [nick]} :path-params :keys [parameters] :as request}]
-  (if-let* [board (db/get-board-by-nick {:nick nick})
+(defn thread-page [{{:keys [nick]} :path-params :keys [flash parameters] :as request}]
+  (if-let* [{:keys [name]} (db/get-board-by-nick {:nick nick})
             thread_id (db/get-thread-id-by-nick-post {:nick nick :post_id (-> parameters :path :id)})]
     (layout/render
-     request "thread.html" {:board_nick nick
-                            :board_name (:name board)
-                            :boards (vec (db/get-boards)) ;; Pull out all the nav related args out into their own function
-                            :thread (boards/get-whole-thread thread_id)})
+     request "thread.html" (merge {:board_nick nick
+                                   :board_name name
+                                   :boards (vec (db/get-boards)) ;; Pull out all the nav related args out into their own function
+                                   :post_id (-> parameters :path :id)
+                                   :thread (boards/get-whole-thread thread_id)}
+                                  (select-keys flash [:name :email :subject :content :errors])))
     (layout/error-page {:status 404, :title "404 - Page not found"})))
 
-(defn create-thread-and-primary! [{:keys [path-params params]}]
+(defn create-thread-and-primary! [{{:keys [nick]} :path-params 
+                                   :keys [params]}]
   (if-let [errors (boards/validate-post params)]
-    (-> (response/found (format "/boards/%s" (:nick path-params)))
+    (-> (redirect (format "/boards/%s" nick))
         (assoc :flash (assoc params :errors errors)))
-    (if-let [thread_id (db/create-thread-on-nick! path-params)]
-      ((->> (boards/clean-params params)
-            (merge thread_id)
-            (db/create-primary!))
-     ;; upload media from primary post id (when query is not nil, upload media)
-       (response/found (format "/boards/%s/res/%d" (:nick path-params) (:id thread_id))))
+    (if-let [thread_id (db/create-thread-on-nick! {:nick nick})]
+      (let [{:keys [id primary_id]} (->> (boards/clean-params params)
+                              (merge thread_id)
+                              (boards/create-primary!))]
+        (when (media/validate-file (:media params))
+         (media/upload-file! (:media params) id))
+        (redirect (format "/boards/%s/res/%s" nick primary_id)))
       (layout/error-page {:status 404, :title "404 - Page not found"}))))
+
+(defn create-reply! [{{:keys [nick]} :path-params
+                      :keys [params parameters]}]
+  (if-let [errors (boards/validate-post params)]
+    (-> (redirect (format "/boards/%s/res/%d" nick (-> parameters :path :id)))
+        (assoc :flash (assoc params :errors errors)))
+    (if-let [thread_id (db/get-thread-id-by-nick-post {:nick nick :post_id (-> parameters :path :id)})]
+      (let [post_id (->> (boards/clean-params params)
+               (merge thread_id)
+               (db/create-reply!))]
+          (when (media/validate-file (:media params))
+            (media/upload-file! (:media params) (:id post_id)))
+          (redirect (str "/boards/" nick)))
+      (layout/error-page {:status 404, :title "404 - Page not found"}))))
+
+(def coercion-middleware
+  (exception/create-exception-middleware
+   (merge
+    exception/default-handlers
+    {:reitit.coercion/request-coercion
+     (constantly (layout/error-page {:status 400, :title "400 - Bad Request"}))})))
 
 
 (defn board-routes []
@@ -61,7 +88,12 @@
                  middleware/wrap-formats]}
    ["/boards/:nick"
     ["" {:get board-page}]
-    ["/res/:id" {:get {:coercion reitit.coercion.spec/coercion
-                       :parameters {:path {:id int?}}
-                       :handler thread-page}}] ;; nest here "post"
-    ["/thread" {:post create-thread-and-primary!}]]])
+    ["/res/:id"
+      {:coercion reitit.coercion.spec/coercion
+       :parameters {:path {:id int?}}
+       :middleware [coercion-middleware ;; currently does not play nicely with the dev error handling
+                    coercion/coerce-request-middleware]
+       }
+      ["" {:get thread-page}]
+      ["/post" {:post create-reply!}]]
+     ["/thread" {:post create-thread-and-primary!}]]])
