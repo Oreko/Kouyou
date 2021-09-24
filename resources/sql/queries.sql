@@ -27,9 +27,16 @@ select * from threads
     order by threads.modified_at desc
     limit :count
 
+-- :name get-primary-post-id-from-id :? :1
+-- :doc selects the post_id for the primary post using the post's `id`
+select posts.post_id from posts
+    where posts.thread_id in (select thread_id
+    from posts where posts.id = :id)
+    and posts.is_primary = true 
+
 -- :name get-non-primary-thread-posts :? :*
 -- :doc selects all non-primary posts associated to a thread `id`
-select * from posts join media
+select media.name, media.data, posts.* from posts left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
     and posts.is_primary = false
@@ -37,17 +44,20 @@ select * from posts join media
 
 -- :name get-primary-thread-post :? :1
 -- :doc selects the primary post associated to a thread `id`
-select * from posts
+select media.name, media.data, posts.* from posts left join media
+    on posts.media_id = media.id
     where posts.thread_id = :id
     and posts.is_primary = true
 
 -- :name get-last-nonprimary-posts-n :? :*
 -- :doc selects the last `count` non-primary posts associated to a thread `id`
-select * from (select * from posts
-    where posts.thread_id = :id
-    and posts.is_primary = false
-    order by posts.id desc
-    limit :count) as p order by p.id asc
+select p.* from (select media.name, media.data, posts.*
+        from posts left join media
+        on posts.media_id = media.id
+        where posts.thread_id = :id
+        and posts.is_primary = false
+        order by posts.id desc
+        limit :count) as p order by p.id asc
 
 -- :name create-thread-on-nick! :<! :1
 -- :doc creates a new thread on board `nick`
@@ -57,13 +67,17 @@ insert into threads
     returning id
 
 -- :name store-media! :! :n
--- :doc stores a media file `media` for post `id`
+-- :doc stores media `data` with type `type` and name `name` for post `id`
 insert into media
-    (media, post_id)
-    values (:media, :id)
+    (type, data, name, post_id)
+    values (:type, :data, :name, :id)
+
+-- :name get-media :? :1
+-- :doc selects the media corresponding to a primary `id`
+select * from media where id = :id
 
 -- :name create-primary! :<! :1
--- :doc creates a primary post using `id`, `subject`, `email`, `name`, and `content` removing nil parameters
+-- :doc creates a primary post using `id`, `subject`, `email`, `name`, and `content` removing nil parameters and returning the id
 -- strong candidate for a refactor to make a more generic function.
 insert into posts
     (is_primary, thread_id, content
@@ -72,6 +86,21 @@ insert into posts
     --~ (when (contains? params :name) ", name")
     )
     values (true, :id, :content
+    --~ (when (contains? params :subject) ", :subject")
+    --~ (when (contains? params :email) ", :email")
+    --~ (when (contains? params :name) ", :name")
+    )
+    returning id
+
+-- :name create-reply! :<! :1
+-- :doc creates a reply using `id`, `subject`, `email`, `name`, and `content` removing nil parameters and returning the id
+insert into posts
+    (thread_id, content
+    --~ (when (contains? params :subject) ", subject")
+    --~ (when (contains? params :email) ", email")
+    --~ (when (contains? params :name) ", name")
+    )
+    values (:id, :content
     --~ (when (contains? params :subject) ", :subject")
     --~ (when (contains? params :email) ", :email")
     --~ (when (contains? params :name) ", :name")
