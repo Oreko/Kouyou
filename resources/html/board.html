@@ -33,9 +33,9 @@
                     <input type=file name=media id="media"/>
                 </p>
             </form>
-            {% if errors %}
+            {% if errors.content %}
             <div class="errors">
-                {{errors|join}}
+                {{errors.content|join}}
             </div>
             {% endif %}
         </center>

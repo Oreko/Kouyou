@@ -4,7 +4,7 @@
 <div class=content>
     <div id=poster>
         <center>
-            <form class=post method=POST id=postform name=postform action="/boards/{{board_nick}}/thread" enctype="multipart/form-data">
+            <form class=post method=POST id=postform name=postform action="/boards/{{board_nick}}/res/{{post_id}}/post" enctype="multipart/form-data">
                 {% csrf-field %}
                 <p>
                     <label for=name> Name </label>
@@ -17,7 +17,7 @@
                 <p>
                     <label for="subject"> Subject </label>
                     <input type=text class=inputtext maxlength=255 name=subject value="{{subject}}"/>
-                    <input class=button type=submit value="New Thread"/>
+                    <input class=button type=submit value="Post"/>
                 </p>
                 <p>
                     <label for=content> Comment </label>
@@ -33,9 +33,9 @@
                     <input type=file name=media id="media"/>
                 </p>
             </form>
-            {% if errors %}
+            {% if errors.content %}
             <div class="errors">
-                {{errors|join}}
+                {{errors.content|join}}
             </div>
             {% endif %}
         </center>
