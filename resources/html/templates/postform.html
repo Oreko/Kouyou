@@ -1,0 +1,57 @@
+<div class=postform>
+    <center>
+        <form class=post method=POST id=postform name=postform action={{postform_action}} enctype="multipart/form-data">
+            {% csrf-field %}
+            <table>
+                <tbody>
+                    <tr>
+                        <td class=labelblock>
+                            <label for=name> Name </label>
+                        </td>
+                        <td>
+                            <input type=text class=inputtext size=28 maxlength=255 name=name value="{{name}}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class=labelblock>
+                            <label for=email> Email </label>
+                        </td>
+                        <td>
+                            <input type=text class=inputtext size=28 maxlength=255 name=email value="{{email}}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class=labelblock>
+                            <label for="subject"> Subject </label>
+                        </td>
+                        <td>
+                            <input type=text class=inputtext size=28 maxlength=255 name=subject value="{{subject}}">
+                            <input class=button type=submit value="{{postform_button}}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class=labelblock>
+                            <label for=content> Comment </label>
+                        </td>
+                        <td>
+                            <textarea class=inputtext maxlength=5000 cols=48 rows=10 name=content>{{content}}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class=labelblock>
+                            <label for=media> File </label>
+                        </td>
+                        <td>
+                            <input type=file name=media id="media">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        {% if errors.content %}
+        <div class="errors">
+            {{errors.content|join}}
+        </div>
+        {% endif %}
+    </center>
+</div>

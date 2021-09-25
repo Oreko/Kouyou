@@ -1,11 +1,18 @@
-<ul class={{post_class}} id="p{{post_data.post_id}}">
-    <il class=postinfo>
+<div class=post id="p{{post_data.post_id}}">
+    {% if post_data.is_primary %}
+    {% if post_data.media_id %}
+        <div class=filesize>
+            File: <a href="/media/{{post_data.media_id}}">{{post_data.media_name}}</a>
+        </div>
+        <a href="/media/{{post_data.media_id}}"><img src="/media/{{post_data.media_id}}" title="Click to show view full image" ></a>
+    {% endif %}
+    {% endif %}
+    <div class=postinfo>
         {% if post_data.subject %}
         <big class=posttitle>
             <b>{{post_data.subject}}</b>
         </big>
         {% endif %}
-    
         <span class=postername>
             {% if post_data.email %}
                 <a href="mailto:{{post_data.email}}">{{post_data.name}}</a>
@@ -13,17 +20,24 @@
                 <b>{{post_data.name}}</b>
             {% endif %}
         </span>
-    
         {{post_data.created_at|date:mediumDateTime}}
-        
-        <span class=postnumber>
-            <a href=#p{{post_data.post_id}}>No.</a><a href=/boards/{{board_nick}}/res/{{post_data.post_id}}#p{{post_data.post_id}}>{{post_data.post_id}}</a>
-        </span>
-    </il>
-    {% if post_data.media_id %}
-    <il class=postimage>
+        <nobr>
+            <span class=postnumber>
+                <a href=/boards/{{board_nick}}/res/{{post_data.post_id}}#p{{post_data.post_id}}>No.</a><a href=/boards/{{board_nick}}/res/{{post_data.post_id}}#p{{post_data.post_id}}>{{post_data.post_id}}</a>
+            </span>
+
+            {% if post_data.is_primary %}
+            [<a href=/boards/{{board_nick}}/res/{{post_data.post_id}}>Reply</a>]
+            {% endif %}
+        </nobr>
+    </div>
+    {% if not post_data.is_primary %}
+    {% if post_data.media_id%}
+        <div class=filesize>
+            File: <a href="/media/{{post_data.media_id}}">{{post_data.media_name}}</a>
+        </div>
         <a href="/media/{{post_data.media_id}}"><img src="/media/{{post_data.media_id}}" title="Click to show view full image" /></a>
-    </il>
     {% endif %}
-    <il class=postcontent>{{post_data.content}}</il>
-</ul>
+    {% endif %}
+    <blockquote>{{post_data.content}}</blockquote>
+</div>

@@ -2,68 +2,39 @@
 {% block title %} Kouyou - /{{board_nick}}/ {% endblock %}
 {% block content %}
 <div class=content>
-    <div id=poster>
-        <center>
-            <form class=post method=POST id=postform name=postform action="/boards/{{board_nick}}/thread" enctype="multipart/form-data">
-                {% csrf-field %}
-                <p>
-                    <label for=name> Name </label>
-                    <input type=text class=inputtext maxlength=255 name=name value="{{name}}"/>
-                </p>
-                <p>
-                    <label for=email> Email </label>
-                    <input type=text class=inputtext maxlength=255 name=email value="{{email}}"/>
-                </p>
-                <p>
-                    <label for="subject"> Subject </label>
-                    <input type=text class=inputtext maxlength=255 name=subject value="{{subject}}"/>
-                    <input class=button type=submit value="New Thread"/>
-                </p>
-                <p>
-                    <label for=content> Comment </label>
-                    <textarea 
-                        class=inputtext
-                        maxlength=5000
-                        cols=48
-                        rows=4
-                        name=content>{{content}}</textarea>
-                </p>
-                <p>
-                    <label for=media> File </label>
-                    <input type=file name=media id="media"/>
-                </p>
-            </form>
-            {% if errors.content %}
-            <div class="errors">
-                {{errors.content|join}}
-            </div>
-            {% endif %}
-        </center>
-    </div>
     <div class=info>
-        {{board_name|capitalize}}
+        <h1>{{board_name|capitalize}}</h1>
+        <hr width="90%" size=1>
     </div>
-    <ul class=threads>
+    {% include "templates/postform.html" with postform_button="New Thread" %}
+    <hr size=1>
+    <ol class=threads>
         {% if threads|empty? %}
             No posts found
         {% else %}
-        {% for thread in threads %}
-        <ul class=thread>
-            {% with post_data=thread.primary
-                post_class="op"
-                is_locked=thread.is_locked
-                is_stickied=thread.is_stickied %}
-            {% include "templates/post.html" %}
-            {% endwith %}
-
-            {% for post in thread.posts %}
-                {% with post_data=post post_class="reply" %}
-                {% include "templates/post.html" %}
-                {% endwith %}
+            {% for thread in threads %}
+                <li class=thread>
+                    <div class=op> 
+                        {% with post_data=thread.primary is_stickied=thread.is_stickied is_locked=thread.is_locked %}
+                        {% include "templates/post.html" %}
+                        {% endwith %}
+                    </div>
+                    {% if not thread.posts|empty? %}
+                    <ol class=replies>
+                        {% for post in thread.posts %}
+                        <div>
+                            <li class=reply>
+                                {% with post_data=post %}
+                                {% include "templates/post.html" %}
+                                {% endwith %}
+                            </li>
+                        </div>
+                        {% endfor %}
+                    </ol>
+                    {% endif %}
+                </li>
             {% endfor %}
-        </ul>
-        {% endfor %}
         {% endif %}
-    </ul>
+    </ol>
 </div>
 {% endblock %}

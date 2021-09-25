@@ -2,57 +2,29 @@
 {% block title %} Title me up bby {% endblock %}
 {% block content %}
 <div class=content>
-    <div id=poster>
-        <center>
-            <form class=post method=POST id=postform name=postform action="/boards/{{board_nick}}/res/{{post_id}}/post" enctype="multipart/form-data">
-                {% csrf-field %}
-                <p>
-                    <label for=name> Name </label>
-                    <input type=text class=inputtext maxlength=255 name=name value="{{name}}"/>
-                </p>
-                <p>
-                    <label for=email> Email </label>
-                    <input type=text class=inputtext maxlength=255 name=email value="{{email}}"/>
-                </p>
-                <p>
-                    <label for="subject"> Subject </label>
-                    <input type=text class=inputtext maxlength=255 name=subject value="{{subject}}"/>
-                    <input class=button type=submit value="Post"/>
-                </p>
-                <p>
-                    <label for=content> Comment </label>
-                    <textarea 
-                        class=inputtext
-                        maxlength=5000
-                        cols=48
-                        rows=4
-                        name=content>{{content}}</textarea>
-                </p>
-                <p>
-                    <label for=media> File </label>
-                    <input type=file name=media id="media"/>
-                </p>
-            </form>
-            {% if errors.content %}
-            <div class="errors">
-                {{errors.content|join}}
-            </div>
-            {% endif %}
-        </center>
-    </div>
     <div class=info>
-        {{board_name|capitalize}}
+        <h1>{{board_name|capitalize}}</h1>
+        <hr width="90%" size=1>
     </div>
-    <ul class=thread>
-        {% with post_data=thread.primary post_class="op" %}
+    {% include "templates/postform.html" with postform_button="Post" %}
+    <hr size=1>
+    <div class=op>
+        {% with post_data=thread.primary %}
         {% include "templates/post.html" %}
         {% endwith %}
-
-        {% for post in thread.posts %}
-            {% with post_data=post post_class="reply" %}
-            {% include "templates/post.html" %}
-            {% endwith %}
-        {% endfor %}
-    </ul>
+    </div>
+    {% if not thread.posts|empty? %}
+        <ol class=replies>
+            {% for post in thread.posts %}
+                <div>
+                    <li class=reply>
+                        {% with post_data=post %}
+                        {% include "templates/post.html" %}
+                        {% endwith %}
+                    </li>
+                </div>
+            {% endfor %}
+        </ol>
+    {% endif %}
 </div>
 {% endblock %}
