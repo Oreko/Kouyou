@@ -26,6 +26,7 @@
     (layout/render
      request "board.html" (merge {:board_nick nick
                                   :board_name (:name board)
+                                  :postform_action (format "/boards/%s/thread" nick)
                                   :boards (vec (db/get-boards))
                                   :threads (as-> (boards/thread-list (:id board) 10) arg ;; Pull the numbers from the configuration
                                              (:threads arg)
@@ -40,8 +41,8 @@
     (layout/render
      request "thread.html" (merge {:board_nick nick
                                    :board_name name
+                                   :postform_action (format "/boards/%s/res/%d/post" nick (-> parameters :path :id))
                                    :boards (vec (db/get-boards)) ;; Pull out all the nav related args out into their own function
-                                   :post_id (-> parameters :path :id)
                                    :thread (boards/get-whole-thread thread_id)}
                                   (select-keys flash [:name :email :subject :content :errors])))
     (layout/error-page {:status 404, :title "404 - Page not found"})))
@@ -91,9 +92,8 @@
     ["/res/:id"
       {:coercion reitit.coercion.spec/coercion
        :parameters {:path {:id int?}}
-       :middleware [coercion-middleware ;; currently does not play nicely with the dev error handling
-                    coercion/coerce-request-middleware]
-       }
+       :middleware [;coercion-middleware ;; currently does not play nicely with the dev error handling
+                    coercion/coerce-request-middleware]}
       ["" {:get thread-page}]
       ["/post" {:post create-reply!}]]
      ["/thread" {:post create-thread-and-primary!}]]])

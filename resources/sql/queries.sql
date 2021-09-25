@@ -36,7 +36,7 @@ select posts.post_id from posts
 
 -- :name get-non-primary-thread-posts :? :*
 -- :doc selects all non-primary posts associated to a thread `id`
-select media.name, media.data, posts.* from posts left join media
+select media.name as media_name, posts.* from posts left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
     and posts.is_primary = false
@@ -44,14 +44,14 @@ select media.name, media.data, posts.* from posts left join media
 
 -- :name get-primary-thread-post :? :1
 -- :doc selects the primary post associated to a thread `id`
-select media.name, media.data, posts.* from posts left join media
+select media.name as media_name, posts.* from posts left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
     and posts.is_primary = true
 
 -- :name get-last-nonprimary-posts-n :? :*
 -- :doc selects the last `count` non-primary posts associated to a thread `id`
-select p.* from (select media.name, media.data, posts.*
+select p.* from (select media.name as media_name, posts.*
         from posts left join media
         on posts.media_id = media.id
         where posts.thread_id = :id
