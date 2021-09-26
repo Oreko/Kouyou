@@ -3,8 +3,9 @@
     {% if post_data.media_id %}
         <div class=filesize>
             File: <a href="/media/{{post_data.media_id}}">{{post_data.media_name}}</a>
+            ({{post_data.size|to-kb}} KB, {{post_data.width}}x{{post_data.height}})
         </div>
-        <a href="/media/{{post_data.media_id}}"><img src="/media/{{post_data.media_id}}" title="Click to show view full image" ></a>
+        <a href="/media/{{post_data.media_id}}" target=_blank rel=nofollow><img src="/media/{{post_data.thumbnail_id}}" title="Click to show view full image" ></a>
     {% endif %}
     {% endif %}
     <div class=postinfo>
@@ -26,7 +27,7 @@
                 <a href=/boards/{{board_nick}}/res/{{post_data.post_id}}#p{{post_data.post_id}}>No.</a><a href=/boards/{{board_nick}}/res/{{post_data.post_id}}#p{{post_data.post_id}}>{{post_data.post_id}}</a>
             </span>
 
-            {% if post_data.is_primary %}
+            {% if all post_data.is_primary show_reply %}
             [<a href=/boards/{{board_nick}}/res/{{post_data.post_id}}>Reply</a>]
             {% endif %}
         </nobr>
@@ -35,8 +36,9 @@
     {% if post_data.media_id%}
         <div class=filesize>
             File: <a href="/media/{{post_data.media_id}}">{{post_data.media_name}}</a>
+            ({{post_data.size|to-kb}} KB, {{post_data.width}}x{{post_data.height}})
         </div>
-        <a href="/media/{{post_data.media_id}}"><img src="/media/{{post_data.media_id}}" title="Click to show view full image" /></a>
+        <a href="/media/{{post_data.media_id}}" target=_blank rel=nofollow><img src="/media/{{post_data.thumbnail_id}}" title="Click to show view full image" ></a>
     {% endif %}
     {% endif %}
     <blockquote>{{post_data.content}}</blockquote>

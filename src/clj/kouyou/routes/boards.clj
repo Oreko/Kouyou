@@ -57,7 +57,7 @@
                               (merge thread_id)
                               (boards/create-primary!))]
         (when (media/validate-file (:media params))
-         (media/upload-file! (:media params) id))
+         (media/upload_image_and_thumbnail! (:media params) {:thumb_width 250 :thumb_height 250} id))
         (redirect (format "/boards/%s/res/%s" nick primary_id)))
       (layout/error-page {:status 404, :title "404 - Page not found"}))))
 
@@ -71,7 +71,7 @@
                (merge thread_id)
                (db/create-reply!))]
           (when (media/validate-file (:media params))
-            (media/upload-file! (:media params) (:id post_id)))
+            (media/upload_image_and_thumbnail! (:media params) {:thumb_width 250 :thumb_height 250} (:id post_id)))
           (redirect (str "/boards/" nick)))
       (layout/error-page {:status 404, :title "404 - Page not found"}))))
 

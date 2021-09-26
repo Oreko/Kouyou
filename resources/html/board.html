@@ -15,7 +15,7 @@
             {% for thread in threads %}
                 <li class=thread>
                     <div class=op> 
-                        {% with post_data=thread.primary is_stickied=thread.is_stickied is_locked=thread.is_locked %}
+                        {% with post_data=thread.primary show_reply=1 %}
                         {% include "templates/post.html" %}
                         {% endwith %}
                     </div>
@@ -33,6 +33,7 @@
                     </ol>
                     {% endif %}
                 </li>
+                <span class=clear><hr></span>
             {% endfor %}
         {% endif %}
     </ol>

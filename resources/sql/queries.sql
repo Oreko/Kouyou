@@ -36,7 +36,7 @@ select posts.post_id from posts
 
 -- :name get-non-primary-thread-posts :? :*
 -- :doc selects all non-primary posts associated to a thread `id`
-select media.name as media_name, posts.* from posts left join media
+select media.name as media_name, media.width, media.height, media.size, posts.* from posts left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
     and posts.is_primary = false
@@ -44,14 +44,14 @@ select media.name as media_name, posts.* from posts left join media
 
 -- :name get-primary-thread-post :? :1
 -- :doc selects the primary post associated to a thread `id`
-select media.name as media_name, posts.* from posts left join media
+select media.name as media_name, media.width, media.height, media.size, posts.* from posts left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
     and posts.is_primary = true
 
 -- :name get-last-nonprimary-posts-n :? :*
 -- :doc selects the last `count` non-primary posts associated to a thread `id`
-select p.* from (select media.name as media_name, posts.*
+select p.* from (select media.name as media_name, media.width, media.height, media.size, posts.*
         from posts left join media
         on posts.media_id = media.id
         where posts.thread_id = :id
@@ -69,8 +69,8 @@ insert into threads
 -- :name store-media! :! :n
 -- :doc stores media `data` with type `type` and name `name` for post `id`
 insert into media
-    (type, data, name, post_id)
-    values (:type, :data, :name, :id)
+    (type, data, name, is_thumbnail, width, height, size, post_id)
+    values (:type, :data, :name, :is_thumbnail, :width, :height, :size, :id)
 
 -- :name get-media :? :1
 -- :doc selects the media corresponding to a primary `id`

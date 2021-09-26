@@ -6,6 +6,7 @@
         <title>{% block title %}Kouyou{% endblock %}</title>
 
         <!-- styles -->
+        {% style """/css/base.css" %}
         {% style """/css/futaba.css" %}
         {% block styles %}
         {% endblock %}
@@ -26,9 +27,11 @@
 
         
         <!-- footer -->
-        <footer>
-            <p>Powered by Kouyou <a href="https://github.com/Oreko/kouyou">Github</a></p>
-        </footer>
+        <section class=section>
+            <footer>
+                <p>Powered by Kouyou <a href="https://github.com/Oreko/kouyou">Github</a></p>
+            </footer>
+        </section>
         <!-- scripts -->
         {% block page-scripts %}
         {% endblock %}

@@ -22,6 +22,7 @@ CREATE TABLE "posts"
  "thread_id" integer NOT NULL,
  "post_id" integer NOT NULL,
  "media_id" integer,
+ "thumbnail_id" integer,
  "is_primary" boolean DEFAULT false,
  "created_at" timestamp with time zone DEFAULT (now()),
  "subject" varchar(255),
@@ -63,20 +64,31 @@ CREATE TRIGGER post_increment
 CREATE TABLE "media"
 ("id" serial PRIMARY KEY,
  "post_id" integer NOT NULL,
+ "is_thumbnail" boolean NOT NULL,
  "name" varchar(255) NOT NULL,
  "type" text NOT NULL,
- "data" bytea NOT NULL);
+ "data" bytea NOT NULL,
+ "width" integer NOT NULL,
+ "height" integer NOT NULL,
+ "size" integer NOT NULL);
 --;;
 ALTER TABLE "media" ADD CONSTRAINT "post_to_media" FOREIGN KEY ("post_id") REFERENCES "posts" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 --;;
 ALTER TABLE "posts" ADD CONSTRAINT "media_to_post" FOREIGN KEY ("media_id") REFERENCES "media" ("id") ON DELETE SET NULL ON UPDATE CASCADE;
+--;;
+ALTER TABLE "posts" ADD CONSTRAINT "thumbnail_to_post" FOREIGN KEY ("thumbnail_id") REFERENCES "media" ("id") ON DELETE SET NULL ON UPDATE CASCADE;
 --;;
 CREATE OR REPLACE FUNCTION tie_media_to_post_fnc() 
    RETURNS TRIGGER 
    LANGUAGE PLPGSQL
 AS $$
 BEGIN
-    UPDATE posts SET posts.media_id = NEW.id WHERE posts.id = NEW.post_id;
+    IF NEW.is_thumbnail THEN
+        UPDATE posts SET thumbnail_id = NEW.id WHERE id = NEW.post_id;
+    ELSE
+        UPDATE posts SET media_id = NEW.id WHERE id = NEW.post_id;
+    END IF;
+
     RETURN NEW;
 END;
 $$
