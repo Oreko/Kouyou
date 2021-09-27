@@ -92,7 +92,7 @@
     ["" {:get board-page}]
     ["/res/:id"
       {:coercion reitit.coercion.spec/coercion
-       :parameters {:path {:id int?}}
+       :parameters {:path {:id (fn [x] (and (int? x) (> 0 x)))}}
        :middleware [;coercion-middleware ;; currently does not play nicely with the dev error handling
                     coercion/coerce-request-middleware]}
       ["" {:get thread-page}]
