@@ -12,31 +12,33 @@ select * from threads where id = :id
 
 -- :name get-thread-id-by-nick-post :? :1
 -- :doc selects a thread off of `nick` and `post_id`
+-- candidate for refactor into index table or similar
 select threads.id from threads
-    join (select thread_id from posts 
+    join (select thread_id from posts
     where posts.post_id = :post_id) as p
     on p.thread_id = threads.id
     join (select id from boards
     where boards.nick = :nick) as b
     on threads.board_id = b.id
 
--- :name get-board-threads-n :? :*
--- :doc selects `count` threads associated to a board `id`
+-- :name get-board-threads-paginated :? :*
+-- :doc selects `count` threads from `page_number` associated to a board `id`
 select * from threads
-    where threads.board_id = :id
-    order by threads.modified_at desc
+    where board_id = :id
+    order by modified_at desc, id desc
     limit :count
 
 -- :name get-primary-post-id-from-id :? :1
 -- :doc selects the post_id for the primary post using the post's `id`
-select posts.post_id from posts
+select posts.post_id as primary_post_id from posts
     where posts.thread_id in (select thread_id
     from posts where posts.id = :id)
-    and posts.is_primary = true 
+    and posts.is_primary = true
 
 -- :name get-non-primary-thread-posts :? :*
 -- :doc selects all non-primary posts associated to a thread `id`
-select media.name as media_name, media.width, media.height, media.size, posts.* from posts left join media
+select media.name as media_name, media.width, media.height, media.size, posts.* from posts
+    left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
     and posts.is_primary = false
@@ -44,7 +46,8 @@ select media.name as media_name, media.width, media.height, media.size, posts.* 
 
 -- :name get-primary-thread-post :? :1
 -- :doc selects the primary post associated to a thread `id`
-select media.name as media_name, media.width, media.height, media.size, posts.* from posts left join media
+select media.name as media_name, media.width, media.height, media.size, posts.* from posts
+    left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
     and posts.is_primary = true
@@ -58,6 +61,10 @@ select p.* from (select media.name as media_name, media.width, media.height, med
         and posts.is_primary = false
         order by posts.id desc
         limit :count) as p order by p.id asc
+
+-- :name get-thread-post-count :? :1
+-- :doc return the number of posts related to thread `id`
+select count(*) as total_post_count from posts where thread_id = :id
 
 -- :name create-thread-on-nick! :<! :1
 -- :doc creates a new thread on board `nick`

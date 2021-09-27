@@ -53,12 +53,12 @@
     (-> (redirect (format "/boards/%s" nick))
         (assoc :flash (assoc params :errors errors)))
     (if-let [thread_id (db/create-thread-on-nick! {:nick nick})]
-      (let [{:keys [id primary_id]} (->> (boards/clean-params params)
+      (let [{:keys [id primary_post_id]} (->> (boards/clean-params params)
                               (merge thread_id)
                               (boards/create-primary!))]
         (when (media/validate-file (:media params))
          (media/upload_image_and_thumbnail! (:media params) {:thumb_width 250 :thumb_height 250} id))
-        (redirect (format "/boards/%s/res/%s" nick primary_id)))
+        (redirect (format "/boards/%s/res/%s" nick primary_post_id)))
       (layout/error-page {:status 404, :title "404 - Page not found"}))))
 
 (defn create-reply! [{{:keys [nick]} :path-params

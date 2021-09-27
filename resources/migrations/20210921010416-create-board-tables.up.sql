@@ -11,6 +11,7 @@ CREATE TABLE "threads"
  "board_id" integer NOT NULL,
  "modified_at" timestamp with time zone DEFAULT (now()) NOT NULL,
  "created_at" timestamp with time zone DEFAULT (now()) NOT NULL,
+ "primary_post_id" integer,
  "is_stickied" boolean DEFAULT false NOT NULL,
  "is_locked" boolean DEFAULT false NOT NULL,
  "is_saged" boolean DEFAULT false NOT NULL);
@@ -32,6 +33,8 @@ CREATE TABLE "posts"
  "content" text NOT NULL);
 --;;
 ALTER TABLE "posts" ADD CONSTRAINT "thread_to_posts" FOREIGN KEY ("thread_id") REFERENCES "threads" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+--;;
+ALTER TABLE "threads" ADD CONSTRAINT "primary_to_thread" FOREIGN KEY ("primary_post_id") REFERENCES "posts" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 --;;
 CREATE OR REPLACE FUNCTION post_increment_fnc() 
    RETURNS TRIGGER 
@@ -60,6 +63,24 @@ CREATE TRIGGER post_increment
     BEFORE INSERT ON posts
     FOR EACH ROW
     EXECUTE PROCEDURE post_increment_fnc();
+--;;
+CREATE OR REPLACE FUNCTION tie_primary_to_thread_fnc() 
+    RETURNS TRIGGER 
+    LANGUAGE PLPGSQL
+AS $$
+BEGIN
+    IF NEW.is_primary THEN
+        UPDATE threads SET primary_post_id = NEW.id WHERE id = NEW.thread_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+--;;
+CREATE TRIGGER tie_primary_to_thread
+    AFTER INSERT ON posts
+    FOR EACH ROW
+    EXECUTE PROCEDURE tie_primary_to_thread_fnc();
 --;;
 CREATE TABLE "media"
 ("id" serial PRIMARY KEY,

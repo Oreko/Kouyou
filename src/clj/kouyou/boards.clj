@@ -6,7 +6,7 @@
 
 
 (defn thread-list [board_id thread_count]
-  {:threads (vec (db/get-board-threads-n {:id board_id :count thread_count}))})
+  {:threads (vec (db/get-board-threads-paginated {:id board_id :count thread_count}))})
 
 (defn get-teaser-posts [thread_id post_count]
   {:primary (db/get-primary-thread-post {:id thread_id})
@@ -15,6 +15,7 @@
 (defn thread-teaser-wrapper [post_count {thread_id :id :as thread}]
   (merge
    {:information thread}
+   (db/get-thread-post-count {:id thread_id})
    (get-teaser-posts thread_id post_count)))
 
 (defn get-whole-thread [thread_id]
@@ -24,8 +25,8 @@
 
 (defn create-primary! [params]
   (let [post_id (db/create-primary! params)]
-    {:id (:id post_id)
-     :primary_id (:post_id (db/get-primary-post-id-from-id post_id))}))
+    (merge post_id
+           (db/get-primary-post-id-from-id post_id))))
 
 (defn clean-params [{:keys [name email content subject media]}]
   (as-> (if (clojure.string/blank? name) {} {:name name}) params

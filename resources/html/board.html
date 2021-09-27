@@ -14,10 +14,13 @@
         {% else %}
             {% for thread in threads %}
                 <li class=thread>
-                    <div class=op> 
+                    <div class=op>
                         {% with post_data=thread.primary show_reply=1 %}
                         {% include "templates/post.html" %}
                         {% endwith %}
+                        {% if thread.total_post_count > 5 %}
+                            <span class="omittedposts">{{thread.total_post_count|add:-5}} posts omitted. Click Reply to view.</span>
+                        {% endif %}
                     </div>
                     {% if not thread.posts|empty? %}
                     <ol class=replies>
@@ -36,6 +39,9 @@
                 <span class=clear><hr></span>
             {% endfor %}
         {% endif %}
+    </ol>
+    <ol class=paginator>
+
     </ol>
 </div>
 {% endblock %}
