@@ -31,6 +31,6 @@
                  middleware/wrap-formats]}
    ["/media/:id" {:get get-file
                    :coercion reitit.coercion.spec/coercion
-                   :parameters {:path {:id int?}}
+                   :parameters {:path {:id pos-int?}}
                    :middleware [coercion-middleware
                                 coercion/coerce-request-middleware]}]])

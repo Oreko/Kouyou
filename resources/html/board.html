@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %} Kouyou - /{{board_nick}}/ {% endblock %}
+{% block title %} Kouyou - {{board_name}} {% endblock %}
 {% block content %}
 <div class=content>
     <div class=info>
-        <h1>{{board_name|capitalize}}</h1>
+        <h1>{{board_name}}</h1>
         <hr width="90%" size=1>
     </div>
     {% include "templates/postform.html" with postform_button="New Thread" %}

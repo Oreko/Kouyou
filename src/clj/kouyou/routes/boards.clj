@@ -28,7 +28,7 @@
                                   :board_name (:name board)
                                   :postform_action (format "/boards/%s/thread" nick)
                                   :boards (vec (db/get-boards))
-                                  :threads (as-> (boards/thread-list (:id board) 10) arg ;; Pull the numbers from the configuration
+                                  :threads (as-> (boards/thread-list (:id board) 15) arg ;; Pull the numbers from the configuration
                                              (:threads arg)
                                              (map (partial boards/thread-teaser-wrapper 4) arg))}
                                  (select-keys flash [:name :email :subject :content :errors])))
@@ -92,7 +92,7 @@
     ["" {:get board-page}]
     ["/res/:id"
       {:coercion reitit.coercion.spec/coercion
-       :parameters {:path {:id int?}} ;; can we just (fn [x] (and (int? x) (< 0 x))) ?
+       :parameters {:path {:id pos-int?}} ;; can we just (fn [x] (and (int? x) (< 0 x))) ?
        :middleware [coercion-middleware ;; currently does not play nicely with the dev error handling
                     coercion/coerce-request-middleware]}
       ["" {:get thread-page}]
