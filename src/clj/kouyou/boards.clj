@@ -39,17 +39,31 @@
 
 (def post-schema
   [[:content
-    st/required
     st/string
     {:message "your post body was too short"
      :validate (fn [content] (>= (count content) 3))}]])
 
+(defn validate_file_type [_] ;; todo
+  (constantly true))
+
+(def thread-schema
+  [[:media
+    st/map
+    {:message "you need an image to start a thread"
+     :validate (fn [{:keys [filename size content-type]}]
+                 (and (not-empty filename)
+                      (not= 0 size)
+                      (validate_file_type content-type)))}]])
+
+(defn validate-thread [params]
+  (first (st/validate params 
+                      (into [] (concat post-schema thread-schema)))))
+
 (defn validate-post [params]
   (first (st/validate params post-schema)))
 
-;; (defn upload-media [])
-;; :media {:filename "", 
-        ;; :content-type "application/octet-stream",
-        ;; :tempfile #object[java.io.File 0x4d56d232 
-        ;;         "/tmp/ring-multipart-2160933553900757697.tmp"], 
-        ;; :size 0}
+(defn check-and-bump! [email thread_id post_id]
+  (when (not-any? true? [(= "sage" email)
+                         (-> (db/get-thread thread_id) (:is_saged))])
+    (db/bump-thread! {:thread_id (:id thread_id) :post_id (:id post_id)}))
+  post_id)

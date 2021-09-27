@@ -106,3 +106,10 @@ insert into posts
     --~ (when (contains? params :name) ", :name")
     )
     returning id
+
+-- :name bump-thread! :! :1
+-- :doc updates a `thread_id`'s modified_at to `post_id`'s
+update threads t
+    set modified_at = p.created_at
+    from posts p
+    where p.id = :post_id and t.id = :thread_id

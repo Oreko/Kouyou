@@ -49,7 +49,7 @@
 
 (defn create-thread-and-primary! [{{:keys [nick]} :path-params 
                                    :keys [params]}]
-  (if-let [errors (boards/validate-post params)]
+  (if-let [errors (boards/validate-thread params)]
     (-> (redirect (format "/boards/%s" nick))
         (assoc :flash (assoc params :errors errors)))
     (if-let [thread_id (db/create-thread-on-nick! {:nick nick})]
@@ -69,7 +69,8 @@
     (if-let [thread_id (db/get-thread-id-by-nick-post {:nick nick :post_id (-> parameters :path :id)})]
       (let [post_id (->> (boards/clean-params params)
                (merge thread_id)
-               (db/create-reply!))]
+               (db/create-reply!)
+               (boards/check-and-bump! (:email params) thread_id))]
           (when (media/validate-file (:media params))
             (media/upload_image_and_thumbnail! (:media params) {:thumb_width 250 :thumb_height 250} (:id post_id)))
           (redirect (str "/boards/" nick)))
