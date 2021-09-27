@@ -15,4 +15,4 @@ CREATE TABLE "moderation_log" (
   "changed_on" timestamp with time zone DEFAULT (now())
 );
 --;;
-ALTER TABLE "moderation_lod" ADD CONSTRAINT "staff_to_actions" FOREIGN KEY ("staff_id") REFERENCES "staff" ("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "moderation_log" ADD CONSTRAINT "staff_to_actions" FOREIGN KEY ("staff_id") REFERENCES "staff" ("id") ON DELETE SET NULL ON UPDATE CASCADE;

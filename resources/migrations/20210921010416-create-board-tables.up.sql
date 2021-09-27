@@ -9,11 +9,11 @@ CREATE TABLE "boards"
 CREATE TABLE "threads"
 ("id" serial PRIMARY KEY,
  "board_id" integer NOT NULL,
- "modified_at" timestamp with time zone DEFAULT (now()),
- "created_at" timestamp with time zone DEFAULT (now()),
- "is_stickied" boolean DEFAULT false,
- "is_locked" boolean DEFAULT false,
- "is_saged" boolean DEFAULT false);
+ "modified_at" timestamp with time zone DEFAULT (now()) NOT NULL,
+ "created_at" timestamp with time zone DEFAULT (now()) NOT NULL,
+ "is_stickied" boolean DEFAULT false NOT NULL,
+ "is_locked" boolean DEFAULT false NOT NULL,
+ "is_saged" boolean DEFAULT false NOT NULL);
 --;;
 ALTER TABLE "threads" ADD CONSTRAINT "board_to_threads" FOREIGN KEY ("board_id") REFERENCES "boards" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 --;;
@@ -23,10 +23,10 @@ CREATE TABLE "posts"
  "post_id" integer NOT NULL,
  "media_id" integer,
  "thumbnail_id" integer,
- "is_primary" boolean DEFAULT false,
- "created_at" timestamp with time zone DEFAULT (now()),
+ "is_primary" boolean DEFAULT false NOT NULL,
+ "created_at" timestamp with time zone DEFAULT (now()) NOT NULL,
  "subject" varchar(255),
- "name" varchar(255) DEFAULT 'Anonymous',
+ "name" varchar(255) DEFAULT 'Anonymous' NOT NULL,
  "tripcode" varchar(255),
  "email" varchar(255),
  "content" text NOT NULL);
