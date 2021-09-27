@@ -48,10 +48,12 @@
                 </tbody>
             </table>
         </form>
-        {% if errors.content %}
-        <div class="errors">
-            {{errors.content|join}}
-        </div>
+        {% if errors %}
+            <ul class="errors">
+                {% for error in errors %}
+                    <li>{{error|second}}</li>
+                {% endfor %}
+            </ul>
         {% endif %}
     </center>
 </div>

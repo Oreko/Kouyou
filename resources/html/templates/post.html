@@ -24,7 +24,7 @@
         {{post_data.created_at|date:mediumDateTime}}
         <nobr>
             <span class=postnumber>
-                <a href=/boards/{{board_nick}}/res/{{post_data.post_id}}#p{{post_data.post_id}}>No.</a><a href=/boards/{{board_nick}}/res/{{post_data.post_id}}#p{{post_data.post_id}}>{{post_data.post_id}}</a>
+                <a href=/boards/{{board_nick}}/res/{{thread.primary.post_id}}#p{{post_data.post_id}}>No.</a><a href=/boards/{{board_nick}}/res/{{thread.primary.post_id}}#p{{post_data.post_id}}>{{post_data.post_id}}</a>
             </span>
 
             {% if all post_data.is_primary show_reply %}
