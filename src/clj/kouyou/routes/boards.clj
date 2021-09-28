@@ -1,10 +1,11 @@
 (ns kouyou.routes.boards
   (:require
-   [kouyou.layout :as layout]
    [kouyou.boards :as boards]
-   [kouyou.media :as media]
    [kouyou.db.core :as db]
+   [kouyou.layout :as layout]
+   [kouyou.media :as media]
    [kouyou.middleware :as middleware]
+   [kouyou.pagination :as pagination]
    [reitit.coercion.spec]
    [reitit.ring.coercion :as coercion]
    [reitit.ring.middleware.exception :as exception]
@@ -23,15 +24,18 @@
 
 (defn board-page [{{:keys [nick]} :path-params :keys [flash] :as request}]
   (if-let [board (db/get-board-by-nick {:nick nick})]
-    (layout/render
-     request "board.html" (merge {:board_nick nick
-                                  :board_name (:name board)
-                                  :postform_action (format "/boards/%s/thread" nick)
-                                  :boards (vec (db/get-boards))
-                                  :threads (as-> (boards/thread-list (:id board) 15) arg ;; Pull the numbers from the configuration
-                                             (:threads arg)
-                                             (map (partial boards/thread-teaser-wrapper 4) arg))}
-                                 (select-keys flash [:name :email :subject :content :errors])))
+    (if-let [pagination_map (pagination/create request (:total_thread_count (db/get-board-thread-count board)))]
+        (layout/render
+         request "board.html" (merge {:board_nick nick
+                                      :board_name (:name board)
+                                      :postform_action (format "/boards/%s/thread" nick)
+                                      :boards (vec (db/get-boards))
+                                      :threads (as-> (boards/thread-list (:id board) (:size pagination_map) (:offset pagination_map)) arg ;; Pull the numbers from the configuration
+                                                 (:threads arg)
+                                                 (map (partial boards/thread-teaser-wrapper 4) arg))}
+                                     {:pagination pagination_map}
+                                     (select-keys flash [:name :email :subject :content :errors])))
+        (layout/error-page {:status 400, :title "400 - Bad Request"}))
     (layout/error-page {:status 404, :title "404 - Page not found"})))
 
 ;; We're calling too many queries here for the same information - refactor time

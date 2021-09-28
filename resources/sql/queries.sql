@@ -22,11 +22,13 @@ select threads.id from threads
     on threads.board_id = b.id
 
 -- :name get-board-threads-paginated :? :*
--- :doc selects `count` threads from `page_number` associated to a board `id`
+-- :doc selects `count` threads from `offset` associated to a board `id`
+-- candidate for refactor as limit-offset is slow
 select * from threads
     where board_id = :id
     order by modified_at desc, id desc
     limit :count
+    offset :offset
 
 -- :name get-primary-post-id-from-id :? :1
 -- :doc selects the post_id for the primary post using the post's `id`
@@ -63,8 +65,12 @@ select p.* from (select media.name as media_name, media.width, media.height, med
         limit :count) as p order by p.id asc
 
 -- :name get-thread-post-count :? :1
--- :doc return the number of posts related to thread `id`
+-- :doc return the number of posts in thread `id`
 select count(*) as total_post_count from posts where thread_id = :id
+
+-- :name get-board-thread-count :? :1
+-- :doc return the number of threads on board `id`
+select count(*) as total_thread_count from threads where board_id = :id
 
 -- :name create-thread-on-nick! :<! :1
 -- :doc creates a new thread on board `nick`

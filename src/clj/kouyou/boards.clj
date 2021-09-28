@@ -5,8 +5,10 @@
    [struct.core :as st]))
 
 
-(defn thread-list [board_id thread_count]
-  {:threads (vec (db/get-board-threads-paginated {:id board_id :count thread_count}))})
+(defn thread-list [board_id thread_count offset]
+  {:threads (vec (db/get-board-threads-paginated {:id board_id
+                                                  :count thread_count
+                                                  :offset offset}))})
 
 (defn get-teaser-posts [thread_id post_count]
   {:primary (db/get-primary-thread-post {:id thread_id})

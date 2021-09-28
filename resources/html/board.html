@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "templates/base.html" %}
 {% block title %} Kouyou - {{board_name}} {% endblock %}
 {% block content %}
 <div class=content>
@@ -40,8 +40,16 @@
             {% endfor %}
         {% endif %}
     </ol>
-    <ol class=paginator>
-
-    </ol>
+    <nav>
+        <ol class=paginator>
+            <li><a href="?page={{pagination.prev_page}}" rel="prev">Previous</a></li>{% for page_number in pagination.page_range %}
+            {% if page_number = pagination.page %}
+            <li class=page>{{page_number}}</li>
+            {% else %}
+            <li><a href="?page={{page_number}}">{{page_number}}</a></li>
+            {% endif %}
+            {% endfor %}<li><a href="?page={{pagination.next_page}}" rel="next">Next</a></li>
+        </ol>
+      </nav>
 </div>
 {% endblock %}
