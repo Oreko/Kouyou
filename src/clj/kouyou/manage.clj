@@ -7,6 +7,7 @@
    [struct.core :as st]))
 
 
+;; todo Allow user's to edit the board keeping the name the same 
 (def board-schema
   {:nick 
    [st/string
@@ -19,9 +20,12 @@
 (defn validate-board [params]
   (first (st/validate params board-schema)))
 
-(defn clean-params [{tagline :tagline :as params}]
-  (if (clojure.string/blank? tagline) (dissoc params :tagline) params))
+(defn clean-params [{:keys [tagline is_hidden is_text_only] :as params}]
+  (as-> (if (clojure.string/blank? tagline) (dissoc params :tagline) params) params
+    (if (nil? is_hidden) (assoc params :is_hidden false) (assoc params :is_hidden true))
+    (if (nil? is_text_only) (assoc params :is_text_only false) (assoc params :is_text_only true))))
 
+;; these functions are very similar. Candidate for refactor
 (defn create-board! [{params :params}]
   (if-let [errors (validate-board params)]
     (-> (redirect "/manage/create-board")
@@ -30,3 +34,16 @@
             (db/create-board!))
         (-> (redirect "/manage/create-board")
             (assoc :flash (assoc params :success true))))))
+
+;; this function is a garbage fire
+(defn edit-board! [{{nick :nick} :path-params params :params }]
+  (if-let [{:keys [nick id]} (db/get-board-by-nick {:nick nick})]
+    (if-let [errors (validate-board params)]
+    (-> (redirect (format "/manage/edit-board/%s" nick))
+        (assoc :flash (assoc params :errors errors)))
+    (do (-> (clean-params params)
+            (merge {:id id}) 
+            (db/update-board!))
+        (-> (redirect (format "/manage/edit-board/%s" (:nick params)))
+            (assoc :flash (assoc params :success true)))))
+    (layout/error-page {:status 404, :title "404 - Page not found"})))

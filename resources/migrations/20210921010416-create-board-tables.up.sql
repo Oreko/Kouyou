@@ -1,10 +1,10 @@
 CREATE TABLE "boards"
 ("id" serial PRIMARY KEY,
- "name" varchar(255) UNIQUE NOT NULL,
+ "name" varchar(255) NOT NULL,
  "nick" varchar(10) UNIQUE NOT NULL,
  "tagline" varchar(255),
- "text_only" boolean DEFAULT false,
- "hidden" boolean DEFAULT false);
+ "is_text_only" boolean DEFAULT false,
+ "is_hidden" boolean DEFAULT false);
 --;;
 CREATE TABLE "threads"
 ("id" serial PRIMARY KEY,
@@ -36,8 +36,8 @@ ALTER TABLE "posts" ADD CONSTRAINT "thread_to_posts" FOREIGN KEY ("thread_id") R
 --;;
 ALTER TABLE "threads" ADD CONSTRAINT "primary_to_thread" FOREIGN KEY ("primary_post_id") REFERENCES "posts" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 --;;
-CREATE OR REPLACE FUNCTION post_increment_fnc() 
-   RETURNS TRIGGER 
+CREATE OR REPLACE FUNCTION post_increment_fnc()
+   RETURNS TRIGGER
    LANGUAGE PLPGSQL
 AS $$
 DECLARE
@@ -64,8 +64,8 @@ CREATE TRIGGER post_increment
     FOR EACH ROW
     EXECUTE PROCEDURE post_increment_fnc();
 --;;
-CREATE OR REPLACE FUNCTION tie_primary_to_thread_fnc() 
-    RETURNS TRIGGER 
+CREATE OR REPLACE FUNCTION tie_primary_to_thread_fnc()
+    RETURNS TRIGGER
     LANGUAGE PLPGSQL
 AS $$
 BEGIN
@@ -99,8 +99,8 @@ ALTER TABLE "posts" ADD CONSTRAINT "media_to_post" FOREIGN KEY ("media_id") REFE
 --;;
 ALTER TABLE "posts" ADD CONSTRAINT "thumbnail_to_post" FOREIGN KEY ("thumbnail_id") REFERENCES "media" ("id") ON DELETE SET NULL ON UPDATE CASCADE;
 --;;
-CREATE OR REPLACE FUNCTION tie_media_to_post_fnc() 
-   RETURNS TRIGGER 
+CREATE OR REPLACE FUNCTION tie_media_to_post_fnc()
+   RETURNS TRIGGER
    LANGUAGE PLPGSQL
 AS $$
 BEGIN

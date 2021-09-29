@@ -8,7 +8,7 @@ select exists (select true from boards where nick = :nick)
 
 -- :name get-board-by-nick :? :1
 -- :doc selects a board indexed by its unique nickname `nick`
-select * from boards where boards.nick = :nick
+select * from boards where nick = :nick order by nick
 
 -- :name get-thread :? :1
 -- :doc selects a thread off of primary key `id`
@@ -125,13 +125,17 @@ insert into posts
     returning id
 
 -- :name create-board! :! :1
--- :doc creates a board using `nick`, `name`, `tagline` removing nil parameters
+-- :doc creates a board using `nick`, `name`, `tagline`, `is_hidden`, and `is_text_only` removing nil parameters
 insert into boards
     (nick, name
     --~ (when (contains? params :tagline) ", tagline")
+    --~ (when (contains? params :is_hidden) ", is_hidden")
+    --~ (when (contains? params :is_text_only) ", is_text_only")
     )
     values (:nick, :name
     --~ (when (contains? params :tagline) ", :tagline")
+    --~ (when (contains? params :is_hidden) ", :is_hidden")
+    --~ (when (contains? params :is_text_only) ", :is_text_only")
     )
 
 -- :name bump-thread! :! :1
@@ -140,3 +144,10 @@ update threads t
     set modified_at = p.created_at
     from posts p
     where p.id = :post_id and t.id = :thread_id
+
+-- :name update-board! :! :1
+-- :doc updates a board `id` using `nick`, `name`, `tagline`, `is_hidden`, and `is_text_only` removing nil parameters
+update boards set
+    nick = :nick, name = :name, is_hidden = :is_hidden, is_text_only = :is_text_only, tagline =
+    --~ (if (contains? params :tagline) ":tagline" "NULL")
+    where id = :id

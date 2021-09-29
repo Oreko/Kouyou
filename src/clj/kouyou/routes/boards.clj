@@ -22,7 +22,7 @@
         ~else)
      then)))
 
-(defn board-page [{{:keys [nick]} :path-params :keys [flash] :as request}]
+(defn board-page [{{nick :nick} :path-params flash :flash :as request}]
   (if-let [board (db/get-board-by-nick {:nick nick})]
     (if-let [pagination_map (pagination/create request (:total_thread_count (db/get-board-thread-count board)))]
         (layout/render

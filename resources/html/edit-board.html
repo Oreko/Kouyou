@@ -1,15 +1,15 @@
 {% extends "templates/base.html" %}
 {% block title %}
-Kouyou - Create Board
+Kouyou - Edit Board
 {% endblock %}
 {% block content %}
 <div class=content>
 <header class=managetitle>
-    <h1>Create Board</h1>
+    <h1>Edit Board</h1>
 </header>
 <center>
     {% if success %}
-    <span class=success>Board Created</span>
+    <span class=success>Board Modified</span>
     {% endif %}
     {% if errors %}
         <ul class="errors">
@@ -64,7 +64,7 @@ Kouyou - Create Board
                 </tr>
             </tbody>
         </table>
-        <input class=button type=submit value="Create Board">
+        <input class=button type=submit value="Save Changes">
     </form>
     </center>
 </div>

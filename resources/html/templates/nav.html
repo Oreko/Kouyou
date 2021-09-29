@@ -2,7 +2,7 @@
     <ol>
         <ol class=boardlist>
             {% for board in boards %}
-            {% if not board.hidden %}
+            {% if not board.is_hidden %}
             <li class=board> <a href="/boards/{{board.nick}}" title="{{board.name}}">{{board.nick}}</a></li>
             {% endif %}
             {% endfor %}

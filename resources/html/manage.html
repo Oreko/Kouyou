@@ -4,7 +4,7 @@ Kouyou - Manage
 {% endblock %}
 {% block content %}
 <div class=content>
-<header class=title>
+<header class=managetitle>
     <h1>Administration Panel</h1>
 </header>
 <fieldset>
@@ -15,13 +15,14 @@ Kouyou - Manage
         <ul>
             {% for board in boards %}
             <li>
-                <a href="/boards/{{board.nick}}">{{board.nick}}</a>
+                <a href="/boards/{{board.nick}}">/{{board.nick}}/</a>
                 -
                 {{board.name}}
                 {% if board.tagline %}
                 -
-                {{board.tagline}}
+                <small>{{board.tagline}}</small>
                 {% endif %}
+                <a href="/manage/edit-board/{{board.nick}}"><small>[edit]</small></a>
             </li>
             {% endfor %}
         </ul>
