@@ -30,7 +30,7 @@
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/media/:id" {:get get-file
-                   :coercion reitit.coercion.spec/coercion
-                   :parameters {:path {:id pos-int?}}
-                   :middleware [coercion-middleware
-                                coercion/coerce-request-middleware]}]])
+                  :coercion reitit.coercion.spec/coercion
+                  :parameters {:path {:id pos-int?}}
+                  :middleware [coercion-middleware
+                               coercion/coerce-request-middleware]}]])

@@ -4,6 +4,7 @@
    [kouyou.layout :refer [error-page]]
    [kouyou.routes.boards :refer [board-routes]]
    [kouyou.routes.home :refer [home-routes]]
+   [kouyou.routes.manage :refer [manage-routes]]
    [kouyou.routes.media :refer [media-routes]]
    [reitit.ring :as ring]
    [ring.middleware.content-type :refer [wrap-content-type]]
@@ -21,7 +22,8 @@
     (ring/router
       [(home-routes)
        (board-routes)
-       (media-routes)])
+       (media-routes)
+       (manage-routes)])
     (ring/routes
       (ring/create-resource-handler
         {:path "/"})

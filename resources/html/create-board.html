@@ -1,0 +1,55 @@
+{% extends "templates/base.html" %}
+{% block title %}
+Kouyou - Create Board
+{% endblock %}
+{% block content %}
+<div class=content>
+<header class=title>
+    <h1>Create Board</h1>
+</header>
+<center>
+    {% if success %}
+    <span class=success>Board Created</span>
+    {% endif %}
+    {% if errors %}
+        <ul class="errors">
+            {% for error in errors %}
+                <li>{{error|second}}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form class=post method=POST id=boardform name=boardform enctype="multipart/form-data">
+        {% csrf-field %}
+        <table>
+            <tbody>
+                <tr>
+                    <td class=labelblock>
+                        <label for=nick> Nickname </label>
+                    </td>
+                    <td>
+                        <input type=text class=inputtext size=28 maxlength=10 name=nick value="{{nick}}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class=labelblock>
+                        <label for=name> Name </label>
+                    </td>
+                    <td>
+                        <input type=text class=inputtext size=28 maxlength=255 name=name value="{{name}}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class=labelblock>
+                        <label for="tagline"> Tagline </label>
+                    </td>
+                    <td>
+                        <input type=text class=inputtext size=28 maxlength=255 name=tagline value="{{tagline}}">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <input class=button type=submit value="Create Board">
+    </form>
+    </center>
+</div>
+{% endblock %}

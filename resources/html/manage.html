@@ -1,0 +1,35 @@
+{% extends "templates/base.html" %}
+{% block title %}
+Kouyou - Manage
+{% endblock %}
+{% block content %}
+<div class=content>
+<header class=title>
+    <h1>Administration Panel</h1>
+</header>
+<fieldset>
+    <legend>Boards</legend>
+    {% if boards|empty? %}
+    No boards exist
+    {% else %}
+        <ul>
+            {% for board in boards %}
+            <li>
+                <a href="/boards/{{board.nick}}">{{board.nick}}</a>
+                -
+                {{board.name}}
+                {% if board.tagline %}
+                -
+                {{board.tagline}}
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <a href="/manage/create-board" ><strong>Create New Board</strong></a>
+</fieldset>
+<fieldset>
+    <legend>Config</legend>
+</fieldset>
+</div>
+{% endblock %}

@@ -1,6 +1,13 @@
 <div class=postform>
     <center>
-        <form class=post method=POST id=postform name=postform action={{postform_action}} enctype="multipart/form-data">
+        {% if errors %}
+            <ul class="errors">
+                {% for error in errors %}
+                    <li>{{error|second}}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form class=post method=POST id=postform name=postform enctype="multipart/form-data">
             {% csrf-field %}
             <table>
                 <tbody>
@@ -48,12 +55,5 @@
                 </tbody>
             </table>
         </form>
-        {% if errors %}
-            <ul class="errors">
-                {% for error in errors %}
-                    <li>{{error|second}}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
     </center>
 </div>

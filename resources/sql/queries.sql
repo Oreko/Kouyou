@@ -2,6 +2,10 @@
 -- :doc selects all columns for all boards
 select * from boards
 
+-- :name does-board-exist :? :1
+-- :doc checks if a board `nick` exists
+select exists (select true from boards where nick = :nick)
+
 -- :name get-board-by-nick :? :1
 -- :doc selects a board indexed by its unique nickname `nick`
 select * from boards where boards.nick = :nick
@@ -119,6 +123,16 @@ insert into posts
     --~ (when (contains? params :name) ", :name")
     )
     returning id
+
+-- :name create-board! :! :1
+-- :doc creates a board using `nick`, `name`, `tagline` removing nil parameters
+insert into boards
+    (nick, name
+    --~ (when (contains? params :tagline) ", tagline")
+    )
+    values (:nick, :name
+    --~ (when (contains? params :tagline) ", :tagline")
+    )
 
 -- :name bump-thread! :! :1
 -- :doc updates a `thread_id`'s modified_at to `post_id`'s
