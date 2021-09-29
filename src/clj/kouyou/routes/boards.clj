@@ -28,7 +28,6 @@
         (layout/render
          request "board.html" (merge {:board_nick nick
                                       :board_name (:name board)
-                                      :postform_action (format "/boards/%s/thread" nick)
                                       :boards (vec (db/get-boards))
                                       :threads (as-> (boards/thread-list (:id board) (:size pagination_map) (:offset pagination_map)) arg ;; Pull the numbers from the configuration
                                                  (:threads arg)
@@ -39,13 +38,12 @@
     (layout/error-page {:status 404, :title "404 - Page not found"})))
 
 ;; We're calling too many queries here for the same information - refactor time
-(defn thread-page [{{:keys [nick]} :path-params :keys [flash parameters] :as request}]
+(defn thread-page [{{nick :nick} :path-params :keys [flash parameters] :as request}]
   (if-let* [{:keys [name]} (db/get-board-by-nick {:nick nick})
             thread_id (db/get-thread-id-by-nick-post {:nick nick :post_id (-> parameters :path :id)})]
     (layout/render
      request "thread.html" (merge {:board_nick nick
                                    :board_name name
-                                   :postform_action (format "/boards/%s/res/%d/post" nick (-> parameters :path :id))
                                    :boards (vec (db/get-boards)) ;; Pull out all the nav related args out into their own function
                                    :thread (boards/get-whole-thread thread_id)}
                                   (select-keys flash [:name :email :subject :content :errors])))
@@ -93,12 +91,14 @@
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/boards/:nick"
-    ["" {:get board-page}]
+    [""
+     {:get board-page
+      :post create-thread-and-primary!}]
     ["/res/:id"
-      {:coercion reitit.coercion.spec/coercion
-       :parameters {:path {:id pos-int?}} ;; can we just (fn [x] (and (int? x) (< 0 x))) ?
-       :middleware [coercion-middleware ;; currently does not play nicely with the dev error handling
-                    coercion/coerce-request-middleware]}
-      ["" {:get thread-page}]
-      ["/post" {:post create-reply!}]]
-     ["/thread" {:post create-thread-and-primary!}]]])
+     {:coercion reitit.coercion.spec/coercion
+      :parameters {:path {:id pos-int?}}
+      :middleware [coercion-middleware ;; currently does not play nicely with the dev error handling
+                   coercion/coerce-request-middleware]}
+     [""
+      {:get thread-page
+       :post create-reply!}]]]])
