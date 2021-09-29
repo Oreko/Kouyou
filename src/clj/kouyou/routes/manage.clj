@@ -35,4 +35,6 @@
       :post manage/create-board!}]
     ["/edit-board/:nick"
      {:get edit-board-page
-      :post manage/edit-board!}]]])
+      :post manage/edit-board!}]
+    ["/delete-board/:nick"
+     {:post manage/delete-board!}]]])

@@ -76,6 +76,10 @@ select count(*) as total_post_count from posts where thread_id = :id
 -- :doc return the number of threads on board `id`
 select count(*) as total_thread_count from threads where board_id = :id
 
+-- :name get-media :? :1
+-- :doc selects the media corresponding to a primary `id`
+select * from media where id = :id
+
 -- :name create-thread-on-nick! :<! :1
 -- :doc creates a new thread on board `nick`
 insert into threads
@@ -88,10 +92,6 @@ insert into threads
 insert into media
     (type, data, name, is_thumbnail, width, height, size, post_id)
     values (:type, :data, :name, :is_thumbnail, :width, :height, :size, :id)
-
--- :name get-media :? :1
--- :doc selects the media corresponding to a primary `id`
-select * from media where id = :id
 
 -- :name create-primary! :<! :1
 -- :doc creates a primary post using `id`, `subject`, `email`, `name`, and `content` removing nil parameters and returning the id
@@ -151,3 +151,7 @@ update boards set
     nick = :nick, name = :name, is_hidden = :is_hidden, is_text_only = :is_text_only, tagline =
     --~ (if (contains? params :tagline) ":tagline" "NULL")
     where id = :id
+
+-- :name delete-board-by-nick! :! :1
+-- :doc deletes board `nick`
+delete from board where nick = :nick

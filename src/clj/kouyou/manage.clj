@@ -47,3 +47,8 @@
         (-> (redirect (format "/manage/edit-board/%s" (:nick params)))
             (assoc :flash (assoc params :success true)))))
     (layout/error-page {:status 404, :title "404 - Page not found"})))
+
+(defn delete-board! [{{nick :nick} :path-params}]
+  (if (db/does-board-exist {:nick nick})
+    (db/delete-board-by-nick! {:nick nick})
+    (layout/error-page {:status 404, :title "404 - Page not found"})))
