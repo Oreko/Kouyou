@@ -9,7 +9,7 @@
 
 ;; todo Allow users to edit the board keeping the name the same 
 (def board-schema
-  {:nick 
+  {:nick
    [st/string
     [st/required :message "your board needs a nickname -- like 'a' for anime"]
     {:message "that nickname is already used"

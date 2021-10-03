@@ -30,15 +30,23 @@
     (merge post_id
            (db/get-primary-post-id-from-id post_id))))
 
-(defn clean-params [{:keys [name email content subject media]}]
-  (as-> (if (clojure.string/blank? name) {} {:name name}) params
-    (if (clojure.string/blank? email) params (assoc params :email email))
-    (if (clojure.string/blank? content) params (assoc params :content content))
-    (if (clojure.string/blank? subject) params (assoc params :subject subject))
+(defn clean-params [{:keys [name email content subject media] :as params}]
+  (as-> (if (clojure.string/blank? name) (dissoc params :name) {:name name})
+        clean_params
+    (if (clojure.string/blank? email)
+      (dissoc clean_params :email)
+      (assoc clean_params :email email))
+    (if (clojure.string/blank? content)
+      (dissoc clean_params :content)
+      (assoc clean_params :content content))
+    (if (clojure.string/blank? subject)
+      (dissoc clean_params :subject)
+      (assoc clean_params :subject subject))
     (if (or
          (clojure.string/blank? (:filename media))
          (= (:size media) 0))
-      params (assoc params :media media))))
+      clean_params
+      (assoc clean_params :media media))))
 
 (def post-schema
   [[:content

@@ -14,8 +14,19 @@ select * from boards where nick = :nick order by nick
 -- :doc selects a thread off of primary key `id`
 select * from threads where id = :id
 
+-- :name get-thread-by-nick-primary :? :1
+-- :doc selects a thread off of board `nick` and primary `post_id`
+select threads.* from threads
+    join (select thread_id, id from posts
+    where posts.post_id = :post_id) as p
+    on (p.thread_id = threads.id
+        and p.id = threads.primary_post_id)
+    join (select id from boards
+    where boards.nick = :nick) as b
+    on threads.board_id = b.id
+
 -- :name get-thread-id-by-nick-post :? :1
--- :doc selects a thread off of `nick` and `post_id`
+-- :doc selects a thread id off of board `nick` and `post_id`
 -- candidate for refactor into index table or similar
 select threads.id from threads
     join (select thread_id from posts
