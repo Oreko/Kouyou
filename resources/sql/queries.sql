@@ -80,6 +80,10 @@ select count(*) as total_thread_count from threads where board_id = :id
 -- :doc selects the media corresponding to a primary `id`
 select * from media where id = :id
 
+-- :name get-user :? :1
+-- :doc selects the user corresponding to `username`
+select * from staff where username = :username
+
 -- :name create-thread-on-nick! :<! :1
 -- :doc creates a new thread on board `nick`
 insert into threads
@@ -138,6 +142,10 @@ insert into boards
     --~ (when (contains? params :is_text_only) ", :is_text_only")
     )
 
+-- :name create-user! :! :1
+-- :doc creates a new user from `username`, password hash `verifier`, and `role`
+insert into staff (username, verifier, role) values (:username, :verifier, :role)
+
 -- :name bump-thread! :! :1
 -- :doc updates a `thread_id`'s modified_at to `post_id`'s
 update threads t
@@ -155,3 +163,7 @@ update boards set
 -- :name delete-board-by-nick! :! :1
 -- :doc deletes board `nick`
 delete from board where nick = :nick
+
+-- :name delete-user-by-name! :! :1
+-- :doc deletes user `username`
+delete from staff where username = :username

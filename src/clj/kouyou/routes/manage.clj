@@ -1,10 +1,16 @@
 (ns kouyou.routes.manage
   (:require
+   [kouyou.authentication :as auth]
    [kouyou.db.core :as db]
    [kouyou.layout :as layout]
    [kouyou.manage :as manage]
    [kouyou.middleware :as middleware]))
 
+
+(defn login-page [{flash :flash :as request}]
+  (layout/render request "login.html" 
+                 (merge {:boards (vec (db/get-boards))}
+                        (select-keys flash [:username :errors]))))
 
 (defn manage-page [request]
   (layout/render request "manage.html" {:boards (vec (db/get-boards))}))
@@ -27,7 +33,11 @@
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
+   ["/login"
+    {:get login-page
+     :post auth/login!}]
    ["/manage"
+    {:middleware [middleware/wrap-restricted]}
     [""
      {:get manage-page}]
     ["/create-board"

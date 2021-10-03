@@ -1,0 +1,45 @@
+{% extends "templates/base.html" %}
+{% block title %}
+Kouyou - Login
+{% endblock %}
+{% block content %}
+<div class=content>
+    <header class=managetitle>
+        <h1>Login</h1>
+    </header>
+    <center>
+        {% debug %}
+    {% if errors %}
+        <ul class="errors">
+            {% for error in errors %}
+                <li>{{error|second}}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form class=post method=POST id=boardform name=boardform enctype="multipart/form-data">
+        {% csrf-field %}
+        <table>
+            <tbody>
+                <tr>
+                    <td class=labelblock>
+                        <label for=username> Username </label>
+                    </td>
+                    <td>
+                        <input type=text class=inputtext size=28 maxlength=255 name=username value="{{username}}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class=labelblock>
+                        <label for=password> Password </label>
+                    </td>
+                    <td>
+                        <input type=password class=inputtext size=28 name=password>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <input class=button type=submit value="Login">
+    </form>
+    </center>
+</div>
+{% endblock %}

@@ -118,3 +118,26 @@ CREATE TRIGGER tie_media_to_post
     AFTER INSERT ON media
     FOR EACH ROW
     EXECUTE PROCEDURE tie_media_to_post_fnc();
+--;;
+CREATE TYPE "enum_roles" AS ENUM
+('owner',
+ 'administrator',
+ 'moderator',
+ 'janitor');
+--;;
+CREATE TABLE "staff"
+("id" serial PRIMARY KEY,
+ "username" VARCHAR(255) UNIQUE NOT NULL,
+ "verifier" text NOT NULL,
+ "role" enum_roles NOT NULL,
+ "created_at" timestamp with time zone DEFAULT (now()) NOT NULL
+ );
+--;;
+CREATE TABLE "moderation_log" (
+  "id" serial PRIMARY KEY,
+  "staff_id" integer,
+  "description" text NOT NULL,
+  "changed_on" timestamp with time zone DEFAULT (now()) NOT NULL
+);
+--;;
+ALTER TABLE "moderation_log" ADD CONSTRAINT "staff_to_actions" FOREIGN KEY ("staff_id") REFERENCES "staff" ("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -1,4 +1,10 @@
-DROP TRIGGER IF EXISTS tie_media_to_post ON media; 
+DROP TABLE IF EXISTS "moderation_log";
+--;;
+DROP TABLE IF EXISTS "staff";
+--;;
+DROP TYPE IF EXISTS "enum_roles";
+--;;
+DROP TRIGGER IF EXISTS tie_media_to_post ON media;
 --;;
 DROP FUNCTION IF EXISTS tie_media_to_post_fnc();
 --;;

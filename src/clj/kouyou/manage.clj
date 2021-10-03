@@ -7,7 +7,7 @@
    [struct.core :as st]))
 
 
-;; todo Allow user's to edit the board keeping the name the same 
+;; todo Allow users to edit the board keeping the name the same 
 (def board-schema
   {:nick 
    [st/string
