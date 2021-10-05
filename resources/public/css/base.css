@@ -1,0 +1,99 @@
+.adminbar {
+    text-align: right;
+    clear: both;
+    float: right;
+}
+
+footer {
+    text-align: center;
+    font-size: 12px;
+    font-family: serif;
+}
+
+.has-text-centered {
+    text-align: center;
+}
+
+div.navlist {
+    font-size: 10pt;
+}
+
+div.navlist a {
+    text-decoration: none;
+}
+
+div.navlist ol {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ol.boardlist {
+    float: left;
+}
+
+ol.boardlist::before {
+    content: '[';
+}
+
+ol.boardlist::after {
+    content: ']';
+}
+
+li.board {
+    display: inline-block;
+}
+
+li.board + li.board::before {
+    content: '/';
+}
+
+ol.linklist {
+    float: right;
+}
+
+ol.linklist li {
+    padding-left: 0;
+    display: inline-block;
+}
+
+ol.linklist li::before {
+    content: '[';
+}
+
+ol.linklist li::after {
+    content: ']';
+}
+
+ol.paginator {
+    list-style: none;
+    display: inline;
+}
+
+ol.paginator::before {
+    content: '[';
+}
+
+ol.paginator::after {
+    content: ']';
+}
+
+ol.paginator li {
+    display: inline;
+}
+
+li.page::before {
+    content: '[';
+}
+
+li.page::after {
+    content: ']';
+}
+
+span.clear {
+    clear: both;
+    display: block;
+}
+
+.section {
+    clear: both;
+}

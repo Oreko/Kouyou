@@ -1,0 +1,26 @@
+html {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background-image: linear-gradient(rgb(255, 204, 170), rgb(255, 255, 238));
+    background-repeat: no-repeat;
+    background-color: #FFE;
+    font-size: 12pt;
+    color: #800000;
+    height: 100%;
+}
+
+div.navlist {
+    color: #bb8866;
+}
+
+div.navlist a {
+    color: #880000;
+}
+
+a:hover {
+    color:#EE0000 !important;
+}
