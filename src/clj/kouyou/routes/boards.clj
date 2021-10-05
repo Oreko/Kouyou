@@ -28,7 +28,6 @@
         (layout/render
          request "board.html" (merge {:board_nick nick
                                       :board_name (:name board)
-                                      :boards (vec (db/get-boards))
                                       :threads (as-> (boards/thread-list (:id board) (:size pagination_map) (:offset pagination_map)) arg ;; Pull the numbers from the configuration
                                                  (:threads arg)
                                                  (map (partial boards/thread-teaser-wrapper 4) arg))}
@@ -44,7 +43,6 @@
     (layout/render
      request "thread.html" (merge {:board_nick nick
                                    :board_name name
-                                   :boards (vec (db/get-boards)) ;; Pull out all the nav related args out into their own function
                                    :thread (boards/get-whole-thread thread)}
                                   (select-keys flash [:name :email :subject :content :errors])))
     (layout/error-page {:status 404, :title "404 - Page not found"})))

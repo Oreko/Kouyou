@@ -9,10 +9,11 @@
            java.lang.Math))
 
 
-(defn validate-file [{:keys [filename size]}]
-  (and
-   (> size 0)
-   (not= "" filename)))
+(defn validate-file [{:keys [filename size] :as media}]
+  (when media
+    (and
+     (> size 0)
+     (not= "" filename))))
 
 ;; (create-thumbnail-filename [filename]
 ;;                            )

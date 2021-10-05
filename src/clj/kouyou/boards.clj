@@ -30,23 +30,24 @@
     (merge post_id
            (db/get-primary-post-id-from-id post_id))))
 
+;; refactor candidate. Something like for each key in [list]
 (defn clean-params [{:keys [name email content subject media] :as params}]
-  (as-> (if (clojure.string/blank? name) (dissoc params :name) {:name name})
+  (as-> (if (clojure.string/blank? name) (dissoc params :name) params)
         clean_params
     (if (clojure.string/blank? email)
       (dissoc clean_params :email)
-      (assoc clean_params :email email))
+      clean_params)
     (if (clojure.string/blank? content)
       (dissoc clean_params :content)
-      (assoc clean_params :content content))
+      clean_params)
     (if (clojure.string/blank? subject)
       (dissoc clean_params :subject)
-      (assoc clean_params :subject subject))
+      clean_params)
     (if (or
          (clojure.string/blank? (:filename media))
          (= (:size media) 0))
-      clean_params
-      (assoc clean_params :media media))))
+      (dissoc clean_params :media)
+      clean_params)))
 
 (def post-schema
   [[:content

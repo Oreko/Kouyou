@@ -9,22 +9,19 @@
 
 (defn login-page [{flash :flash :as request}]
   (layout/render request "login.html" 
-                 (merge {:boards (vec (db/get-boards))}
-                        (select-keys flash [:username :errors]))))
+                 (select-keys flash [:username :errors])))
 
 (defn manage-page [request]
-  (layout/render request "manage.html" {:boards (vec (db/get-boards))}))
+  (layout/render request "manage.html"))
 
 (defn create-board-page [{flash :flash :as request}]
   (layout/render request "create-board.html"
-                 (merge {:boards (vec (db/get-boards))}
-                        (select-keys flash [:nick :name :tagline :is_hidden :is_text_only :errors :success]))))
+                 (select-keys flash [:nick :name :tagline :is_hidden :is_text_only :errors :success])))
 
 (defn edit-board-page [{flash :flash {nick :nick} :path-params :as request}]
   (if-let [board (db/get-board-by-nick {:nick nick})]
     (layout/render request "edit-board.html"
-                   (merge {:boards (vec (db/get-boards))}
-                          board
+                   (merge board
                           (select-keys flash [:errors :success])))
     (layout/error-page {:status 404, :title "404 - Page not found"})))
 
