@@ -3,6 +3,7 @@ CREATE TABLE "boards"
  "name" varchar(255) NOT NULL,
  "nick" varchar(10) UNIQUE NOT NULL,
  "tagline" varchar(255),
+ "post_count" integer DEFAULT 0 NOT NULL,
  "is_text_only" boolean DEFAULT false,
  "is_hidden" boolean DEFAULT false);
 --;;
@@ -48,11 +49,13 @@ BEGIN
         INTO board_identifier
         FROM threads
         WHERE threads.id = NEW.thread_id;
-    SELECT COALESCE(MAX(post_id), 0) + 1
+    SELECT post_count + 1
     	INTO new_post_id
-        FROM posts
-        INNER JOIN threads ON posts.thread_id=threads.id
-        WHERE board_id = board_identifier;
+        FROM boards
+        WHERE boards.id = board_identifier;
+    UPDATE boards
+        SET post_count = new_post_id
+        WHERE boards.id = board_identifier;
     NEW.post_id = new_post_id;
 
     RETURN NEW;
