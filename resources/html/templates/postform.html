@@ -16,7 +16,7 @@
                             <label for=name> Name </label>
                         </td>
                         <td>
-                            <input type=text class=inputtext size=28 maxlength=255 name=name value="{{name}}">
+                            <input type=text class=inputtext lable=name size=28 maxlength=255 name=name value="{{name}}">
                         </td>
                     </tr>
                     <tr>
@@ -24,7 +24,7 @@
                             <label for=email> Email </label>
                         </td>
                         <td>
-                            <input type=text class=inputtext size=28 maxlength=255 name=email value="{{email}}">
+                            <input type=text class=inputtext size=28 label=email maxlength=255 name=email value="{{email}}">
                         </td>
                     </tr>
                     <tr>
@@ -32,7 +32,7 @@
                             <label for="subject"> Subject </label>
                         </td>
                         <td>
-                            <input type=text class=inputtext size=28 maxlength=255 name=subject value="{{subject}}">
+                            <input type=text class=inputtext label=subject size=28 maxlength=255 name=subject value="{{subject}}">
                             <input class=button type=submit value="{{postform_button}}">
                         </td>
                     </tr>
@@ -41,7 +41,7 @@
                             <label for=content> Comment </label>
                         </td>
                         <td>
-                            <textarea class=inputtext maxlength=5000 cols=48 rows=10 name=content>{{content}}</textarea>
+                            <textarea class=inputtext label=content maxlength=5000 cols=48 rows=10 name=content>{{content}}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -49,7 +49,7 @@
                             <label for=media> File </label>
                         </td>
                         <td>
-                            <input type=file name=media id="media">
+                            <input type=file label=media name=media id="media">
                         </td>
                     </tr>
                 </tbody>
