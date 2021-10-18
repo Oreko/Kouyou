@@ -2,8 +2,8 @@
     {% if post_data.is_primary %}
     {% if post_data.media_id %}
         <div class=filesize>
-            File: <a href="/media/{{post_data.media_id}}">{{post_data.media_name|abbreviate:15}}</a>
-            ({{post_data.size|to-kb}} KB, {{post_data.width}}x{{post_data.height}})
+            File: <a href="/media/{{post_data.media_id}}">{{post_data.media_name|abbreviate:30}}</a>
+            ({{post_data.size|to-kb}} KB, {{post_data.media_width}}x{{post_data.media_height}})
         </div>
         <a href="/media/{{post_data.media_id}}" target=_blank rel=nofollow><img src="/media/{{post_data.thumbnail_id}}" loading=lazy title="Click to show view full image" ></a>
     {% endif %}
@@ -41,5 +41,5 @@
         <a href="/media/{{post_data.media_id}}" target=_blank rel=nofollow><img src="/media/{{post_data.thumbnail_id}}" loading=lazy title="Click to show view full image" ></a>
     {% endif %}
     {% endif %}
-    <blockquote>{{post_data.content}}</blockquote>
+    <blockquote class=comment>{{post_data.content|postmarkdown:@board_nick}}</blockquote>
 </div>

@@ -2,6 +2,7 @@
   (:require
    [clojure.java.io]
    [kouyou.db.core :as db]
+   [kouyou.markdown :refer [make-post-transformers]]
    [markdown.core]
    [ring.util.http-response :refer [content-type ok]]
    [ring.util.anti-forgery :refer [anti-forgery-field]]
@@ -12,8 +13,16 @@
   (:import java.lang.Math))
 
 
+(defn post-markdown [content current_board]
+  [:safe
+   (markdown.core/md-to-html-string
+    content
+    :replacement-transformers
+    (make-post-transformers current_board))])
+
 (parser/set-resource-path!  (clojure.java.io/resource "html"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
+(filters/add-filter! :postmarkdown post-markdown)
 (filters/add-filter! :markdown (fn [content] [:safe (markdown.core/md-to-html-string content)]))
 (filters/add-filter! :empty? empty?)
 (filters/add-filter! :to-kb (fn [bytes] (-> (/ bytes 1024) Math/ceil int)))

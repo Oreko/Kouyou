@@ -71,7 +71,7 @@
       (if-let [thread_id (db/get-thread-id-by-nick-post {:nick nick :post_id (-> parameters :path :id)})]
         (let [post_id (->> (boards/clean-params clean_params)
                            (merge thread_id)
-                           (db/create-reply!)
+                           (db/create-reply!) ;; should likely be a when
                            (boards/check-and-bump! (:email clean_params) thread_id))]
           (when (media/validate-file (:media clean_params))
             (media/upload_image_and_thumbnail! (:media clean_params) {:thumb_width 250 :thumb_height 250} (:id post_id)))

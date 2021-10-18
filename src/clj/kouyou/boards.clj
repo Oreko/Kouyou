@@ -31,23 +31,25 @@
            (db/get-primary-post-id-from-id post_id))))
 
 ;; refactor candidate. Something like for each key in [list]
+;; Also try not to use as-> anyway
+;; Isn't there an if-> or similar?
 (defn clean-params [{:keys [name email content subject media] :as params}]
   (as-> (if (clojure.string/blank? name) (dissoc params :name) params)
-        clean_params
+        cleaned_params
     (if (clojure.string/blank? email)
-      (dissoc clean_params :email)
-      clean_params)
+      (dissoc cleaned_params :email)
+      cleaned_params)
     (if (clojure.string/blank? content)
-      (dissoc clean_params :content)
-      clean_params)
+      (dissoc cleaned_params :content)
+      cleaned_params)
     (if (clojure.string/blank? subject)
-      (dissoc clean_params :subject)
-      clean_params)
+      (dissoc cleaned_params :subject)
+      cleaned_params)
     (if (or
          (clojure.string/blank? (:filename media))
          (= (:size media) 0))
-      (dissoc clean_params :media)
-      clean_params)))
+      (dissoc cleaned_params :media)
+      cleaned_params)))
 
 (def post-schema
   [[:content

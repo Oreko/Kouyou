@@ -52,9 +52,24 @@ select posts.post_id as primary_post_id from posts
     from posts where posts.id = :id)
     and posts.is_primary = true
 
+-- :name get-primary-post-id-from-nick-post :? :1
+-- :doc selects the post_id for the primary post using the post's `post_id` and board `nick`
+-- Another candidate for refactor at the table level
+select post_id from posts
+    join (select t.id from boards
+    join (select id, board_id from threads
+    join (select thread_id from posts
+    where post_id = :post_id) as p
+    on p.thread_id = threads.id) as t
+    on t.board_id = boards.id
+    where boards.nick = :nick) as b
+    on posts.thread_id = b.id
+    where posts.is_primary = true;
+
 -- :name get-non-primary-thread-posts :? :*
 -- :doc selects all non-primary posts associated to a thread `id`
-select media.name as media_name, media.width, media.height, media.size, posts.* from posts
+-- Refactor at the table level for thumbnails and normal media index table or something
+select media.name as media_name, media.width as media_width, media.height as media_height, media.size, posts.* from posts
     left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
@@ -63,7 +78,7 @@ select media.name as media_name, media.width, media.height, media.size, posts.* 
 
 -- :name get-primary-thread-post :? :1
 -- :doc selects the primary post associated to a thread `id`
-select media.name as media_name, media.width, media.height, media.size, posts.* from posts
+select media.name as media_name, media.width as media_width, media.height as media_height, media.size, posts.* from posts
     left join media
     on posts.media_id = media.id
     where posts.thread_id = :id
