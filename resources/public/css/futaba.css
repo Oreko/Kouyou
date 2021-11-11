@@ -153,3 +153,8 @@ input.button {
     margin: 0;
     margin-right: 2px;
 }
+
+table.stafftable th {
+    background: #eeaa88;
+    border: 1px solid #800000;
+}

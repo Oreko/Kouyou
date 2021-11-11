@@ -2,6 +2,10 @@
 -- :doc selects all columns for all boards
 select * from boards
 
+-- :name get-staff
+-- :doc selects all columns for all staff
+select * from staff
+
 -- :name does-board-exist :? :1
 -- :doc checks if a board `nick` exists
 select exists (select true from boards where nick = :nick)

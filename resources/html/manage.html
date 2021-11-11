@@ -22,7 +22,7 @@ Kouyou - Manage
                 -
                 <small>{{board.tagline}}</small>
                 {% endif %}
-                <a href="/manage/edit-board/{{board.nick}}"><small>[edit]</small></a>
+                <a href="/manage/boards/{{board.nick}}"><small>[edit]</small></a>
             </li>
             {% endfor %}
         </ul>
@@ -31,6 +31,7 @@ Kouyou - Manage
 </fieldset>
 <fieldset>
     <legend>Config</legend>
+    <a href="/manage/staff" ><strong>Manage Staff</strong></a>
 </fieldset>
 </div>
 {% endblock %}

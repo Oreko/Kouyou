@@ -25,6 +25,11 @@
                           (select-keys flash [:errors :success])))
     (layout/error-page {:status 404, :title "404 - Page not found"})))
 
+(defn staff-page [{flash :flash :as request}]
+  (let [staff (db/get-staff)]
+    (layout/render request "staff.html" 
+                   (merge {:staff staff}
+                          (select-keys flash [:username :errors :success])))))
 
 (defn manage-routes []
   [""
@@ -40,8 +45,15 @@
     ["/create-board"
      {:get create-board-page
       :post manage/create-board!}]
-    ["/edit-board/:nick"
+    ["/boards/:nick"
      {:get edit-board-page
       :post manage/edit-board!}]
-    ["/delete-board/:nick"
-     {:post manage/delete-board!}]]])
+    ["/delete-board/:nick" ;; should we merge these two?
+     {:post manage/delete-board!}]
+    ["/staff"
+     {:get staff-page
+      :post manage/create-staff!}]
+    ;; ["/staff/:id"
+    ;;  {:get edit-staff-page
+    ;;   :post manage/edit-staff!}]
+    ]])

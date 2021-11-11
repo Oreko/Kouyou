@@ -132,7 +132,7 @@ CREATE TABLE "staff"
 ("id" serial PRIMARY KEY,
  "username" VARCHAR(255) UNIQUE NOT NULL,
  "verifier" text NOT NULL,
- "role" enum_roles NOT NULL,
+ "role" smallint NOT NULL,
  "created_at" timestamp with time zone DEFAULT (now()) NOT NULL
  );
 --;;

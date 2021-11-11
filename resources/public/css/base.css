@@ -97,3 +97,13 @@ span.clear {
 .section {
     clear: both;
 }
+
+table.stafftable {
+    margin: auto;
+    width: auto;
+}
+
+table.stafftable tr td {
+    text-align: left;
+    margin: 0;
+}

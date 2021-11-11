@@ -1,0 +1,113 @@
+{% extends "templates/base.html" %}
+{% block title %}
+Kouyou - Staff
+{% endblock %}
+{% block content %}
+<div class=content>
+    <header class=managetitle>
+        <h1>Staff</h1>
+    </header>
+    <table class=stafftable>
+    <tbody>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Username
+            </th>
+            <th>
+                Role
+            </th>
+            <th>
+                Created At
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+        {% for member in staff %}
+        <tr>
+            <td>
+                {{member.id}}
+            </td>
+            <td>
+                {{member.username}}
+            </td>
+            <td>
+                {{member.role}}
+            </td>
+            <td>
+                {{member.created_at|date:mediumDateTime}}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    <center>
+        <header>
+            <h3>Create User</h1>
+        </header>
+        {% if success %}
+        <span class=success>User Created</span>
+        {% endif %}
+        {% if errors %}
+            <ul class="errors">
+                {% for error in errors %}
+                    <li>{{error|second}}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form class=post method=POST id=userform name=userform enctype="multipart/form-data">
+            {% csrf-field %}
+            <table>
+                <tbody>
+                    <tr>
+                        <td class=labelblock>
+                            <label for=username> Username </label>
+                        </td>
+                        <td>
+                            <input type=text class=inputtext size=28 maxlength=10 name=username value="{{username}}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class=labelblock>
+                            <label for=role> Role </label>
+                        </td>
+                        <!-- todo: tie to the database and permissions-->
+                        <td>
+                            <label>
+                                <input type=radio id=owner name=role value=0 /> Owner
+                            </label>
+                            <label>
+                                <input type=radio id=administrator name=role value=1 /> Administrator
+                            </label>
+                            <label>
+                                <input type=radio id=moderator name=role value=2 /> Moderator
+                            </label>
+                            <label>
+                                <input type=radio id=janitor name=role value=3 /> Janitor
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class=labelblock>
+                            <label for=password> Password </label>
+                        </td>
+                        <td>
+                            <!-- todo: reenter, check here and at backend -->
+                            <input type=password class=inputtext name=password>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input class=button type=submit value="Create User">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </center>
+</div>
+{% endblock %}

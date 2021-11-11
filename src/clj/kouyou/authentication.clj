@@ -8,8 +8,18 @@
    [struct.core :as st]))
 
 
+;; Must be a more idiomatic way of doing this.
+;; We're doing this in the first place because enums in the schema upset clojure
+(def role-to-id {:owner 0 :administrator 1 :moderator 2 :janitor 3})
+(defn id-to-role [id]
+  (case id
+    0 :owner
+    1 :administrator
+    2 :moderator
+    3 :janitor))
+
 ;; add note about tuning parameters
-(defn create-user! [name password role]
+(defn create-user! [{name :username password :password role :role}]
   (jdbc/with-transaction [t-conn db/*db*]
                          (if-not (empty? (db/get-user t-conn {:username name}))
                            (throw (ex-info "User already exists!"
@@ -19,7 +29,9 @@
                              (db/create-user! t-conn
                                               {:username name
                                                :verifier verifier
-                                               :role role})))))
+                                               :role (Integer/parseUnsignedInt role)
+                                               ;; :role (role role-to-id)
+                                               })))))
 
 (defn authenticate-user [name password]
   (when-let [{verifier :verifier :as user} (db/get-user {:username name})]
