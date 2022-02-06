@@ -5,9 +5,12 @@ The purpose of this project was originally to familiarize myself with a lisp dia
 
 The name was meant to be something poetic following the naming scheme behind Kareha (枯葉), Futaba (双葉), and Wakaba (若葉) with Kouyou (紅葉), but I've honestly forgotten all the reasoning I had behind the name and reverse engineering it seems forced at the moment.
 
-I have more things I want to change, refactor, or add than I can count.
-Besides refactoring and making queries/databse structure more efficient, here are the ones I can remember at the moment:
-1. 
+I have more things I want to change, refactor, or add than I can count. 
+
+## Important note!!!!!
+**There are also most likely some huge security holes since I haven't spent the time looking for them yet. I would suggest performing an audit of your own before turning this into a public-facing instance.**
+
+There are also some that I'm aware of for sure, so certainly don't deploy without auditing. 
 
 
 ## Running
