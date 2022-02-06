@@ -39,7 +39,7 @@ To start a web server for the application, run:
     
 Then everything sill be visible at localhost:3000
 
->>> It looks like I was thoughtful enough to have a welcome landing page. It can be found when visiting localhost:3000, or at [[resources/markdown/index.md]]
+>>> It looks like I was thoughtful enough to have a welcome landing page. It can be found when visiting localhost:3000, or at [resources/markdown/index.md]
 
 But not thoughtful enough to make that setup script. 
 We need to add the owner account on our own. 
