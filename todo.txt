@@ -1,0 +1,164 @@
+
+
+
+Looks
+    should we remove sage as an email ref?
+    Markdown
+        references -- >> and >>>
+        "replies list" on the post -- will need a many to many from posts to itself and will require parsing the text and pulling out references.
+    Wordfilter
+    Mobile formatting
+    banners
+    thumbnail expansion
+    Thread titles (in actual html title)
+    Board taglines
+    Other styles! just port over the colors probably
+        Add in a way for the user to swap styles
+    Our own icon for deleted files
+    Error pages
+    Spoiler images
+    Theme support
+
+Other Features
+    text-only board (different looks, and no file uploads)
+    passwords / file deletion
+    locked, stickied
+        icons
+    max threadcount per board option
+    Webm support
+    autosage after a bump count -- enable from the admin page
+    Catalog
+    Staff tags
+    Moderator moderating -- logs, per board permissions
+    reports
+    Bans
+        may be difficult. look into how others have done this. -- also timing, per board, etc.
+    Moving threads and posts
+    Support for other databases -- including flat ones so that people can run this wherever they want with as little setup as possible
+    Splitting boards between services?
+    API -- Make sure this is compatible with the apis for tinyboard / vichan
+    deleting boards
+    Stateless everything!
+        Currently auth and csrf are stateful
+
+Input cleanup
+    posts which are too long (too many lines)
+    check for max file size, dimensions, etc.
+    very long filenames (we cut off at 255) and how to display them
+    -- How are we currently dealing with very long posts in terms of characters? We should check our max length stuff and also add it to the content error checker.
+    Generally check everywhere we use user input. What about only whitespace etc etc.
+    Stop too large of input at multiple places (starting at the form)
+
+Security
+    owasp checking (all of them)
+    Different image formats
+    Captcha
+    Tripcode
+        secure tripcode
+    Roles are authorized to do different things -- might want to leave for when we do env stuff
+    Robust logging
+
+Efficiency Stuff
+    caching sql queries / http queries ??? check what we can do in this space
+        cache the board response from the nav bar sql query
+    Refactoring sql queries
+        Would it be better to have a primary id reference for all posts to speed up queries?
+        check for what can be indexed and what can be brought out into a second table
+        make sure pagination is done right
+        The insert trigger is really expensive I think. Profile adding a bunch of random data.
+
+            insert into threads (board_id)
+            select 1                      
+            from generate_series(1, 1000000);
+            insert into posts (is_primary, thread_id, content)
+            select true, i, md5(random()::text)
+            from generate_series(1, 1000000) s(i);
+
+            kouyou_dev=# explain analyze insert into posts (is_primary, thread_id, content)
+            select
+                true, i, md5(random()::text)
+            from generate_series(1, 10000) s(i);
+                                                                        QUERY PLAN                                                               
+            ----------------------------------------------------------------------------------------------------------------------------------------
+            Insert on posts  (cost=0.00..375.00 rows=10000 width=673) (actual time=57156.434..57156.434 rows=0 loops=1)
+            ->  Subquery Scan on "*SELECT*"  (cost=0.00..375.00 rows=10000 width=673) (actual time=0.504..88.180 rows=10000 loops=1)
+                    ->  Function Scan on generate_series s  (cost=0.00..200.00 rows=10000 width=37) (actual time=0.465..38.446 rows=10000 loops=1)
+            Planning Time: 0.046 ms
+            Trigger for constraint thread_to_posts: time=85.878 calls=10000
+            Trigger for constraint media_to_post: time=10.975 calls=10000
+            Trigger for constraint thumbnail_to_post: time=6.524 calls=10000
+        !!  Trigger post_increment: time=56935.364 calls=10000
+            Trigger tie_primary_to_thread: time=318.789 calls=10000
+            Execution Time: 57581.569 ms
+            (10 rows)
+
+            -- This has been changed to be twice as fast, but we should look up how to make this even faster. (requires two table lookups, maybe make this 1. Can we "cache" some of the results?)
+
+
+    checking for the same image upload
+    compressed database storage of images
+
+Code readability and patterns
+    css refactor
+        make sure that we are writing the minimum number of styles -- for instance what can we inherit from the parent instead of writing in the child
+        group together all similar / related styles
+        Pull out everything integral to the base style and leave everything else to the coloring styles
+    factor out all the calls to error-page
+        Is there a way to propagate this error upward instead of calling the function ourselves? What about throwing it? Is this "anti-functional"
+    generally refactor all our functions - make sure that they're as modular and small as possible and that they're in the right files
+        Also make sure they're all idiomatic
+    unify all return and argument types (some take maps, some take values, some return maps, some return values etc.)
+    Add function comments !!!!!
+    Add some test functions actually
+    Delete everything un-used
+        middleware/wrap-formats ???
+    have the get and post targets be the same for threads and replies
+    make sure all indenting is 4 spaces, no whitespace at the end of lines, and every file has an extra line of whitespace at the end
+    Should post acceptors like create-thread-and-primary! give a 4xx page? I think they should give a 4xx response with no html. --- They should also likely be moved to the shallower file (out of routes)
+    Templating for manage pages. Shouldn't have a different html for every action I don't think.
+        Start with the edit/create board
+
+Maybe stuff
+    Tor -- probably not
+    RSS -- maybe not
+    post editing -- later
+    file deletion -- later (see above)
+    recovering deleted posts -- raises questions about the database
+    Post search by ID and UID -- ??? Nah
+    API for posting (instead of just reading) -- hmmmmm
+
+3. Pagination
+    a. 404 on large page number (page not in page-range or similar idea) --- we really need to unify all these errors. Something like propagating the errors up to a single handler.
+        i. Let's save this for the refactor
+4. Admin Page
+    b. basic authentication --- ugh
+        i. Have basic auth and then later upgrade it
+    c. User creation for high enough authorization
+5. What do we want to do about the routing?
+    a. do we want it to just be website/nick/ or is website/boards/nick ok?
+    b. how do we want to deal with routing to textboards?
+    c. is /res/id the best way to do this? and should we 404 on non-primary ids?
+        i. Single url for a single resource is the sensible thing to do
+6. Think about env variables and how to make them work -- will be set both manually and through the admin page
+7. Figure out what we want to have accomplished before we run through and do all the refactoring and efficiency stuff and then publish it.
+    a. Certainly all security and input cleanup points
+        i. except maybe captcha for now
+    b. Certainly references in the post (might want to do together with markup)
+        i. yes listing references.
+    c. Should probably do a deep comparison from ours to futaba, heyuri, and wakaba to see where our formatting is wrong and where we can improve.
+    d. make a barebones rules page and homepage using markup that explains how to use the software and explains the markup language so others can use it.
+        i. Or even better, have the routes dynamically updated from any markdown files so that the users can make them on their own -- relatively static. Maybe even update them from the admin pannel.
+    e. Write up a readme
+        i. figure out deployment and docker
+    f. Profiling
+        i. Fill the database with lots of fake data and do performance testing of the queries and if the pages load correctly/quickly from the user's perspective.
+        ii. Analyze (the query) the sql queries on the large database to see if any of them are slow
+        iii. Look at times for page generation and see if we can use spyglass to help reduce runtime
+    g. Logging
+    h. any lingering todos -- There are a million of these. Before doing this, go looking for them and preface them all with TODO so that they are easy to search for. 
+    i. Stickies, Locks, Autosages
+    j. Redirect manage / login
+        i. Add cookie crumbs for manage pages
+    Image elements do not have explicit width and height -- This should come with the database refactor as the connection between posts/media/thumbnails needs some work.
+    !!!!!! p168. Note that we’re using a db transaction in create-user! to ensure that our queries are performed atomically
+        ooops, let's look to see which transactions need to be atomic
