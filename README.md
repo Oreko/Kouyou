@@ -39,7 +39,7 @@ To start a web server for the application, run:
     
 Then everything sill be visible at localhost:3000
 
->>> It looks like I was thoughtful enough to have a welcome landing page. It can be found when visiting localhost:3000, or at [resources/markdown/index.md]
+>>> It looks like I was thoughtful enough to have a welcome landing page. It can be found when visiting localhost:3000, or at [index.md](resources/markdown/index.md)
 
 But not thoughtful enough to make that setup script. 
 We need to add the owner account on our own. 
@@ -49,5 +49,5 @@ From the repl, run:
     (require '[kouyou.authentication :as kauth])
     (kauth/create-user! {:username "owner" :password "owner" :role "0"})
 
-## My old TODO list for when/if I come back to this project: [[todo.txt]]
+## My old TODO list for when/if I come back to this project: [todolist](todo.txt)
 Fair warning, these are quick notes and are fairly jumbled.
