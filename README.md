@@ -44,12 +44,12 @@ To start a web server for the application, run:
     java -jar target/uberjar/kouyou.jar rollback
     java -jar target/uberjar/kouyou.jar migrate
     
-Then everything sill be visible at localhost:3000
+Then everything will be visible at localhost:3000
 
->>> It looks like I was thoughtful enough to have a welcome landing page. It can be found when visiting localhost:3000, or at [index.md](resources/markdown/index.md)
+_It looks like I was thoughtful enough to have a welcome landing page. It can be found when visiting localhost:3000, or at [index.md](resources/markdown/index.md)_
 
-But not thoughtful enough to make that setup script. 
-We need to add the owner account on our own. 
+_But not thoughtful enough to make that setup script. 
+We need to add the owner account on our own._
 
 From the repl, run:
 
