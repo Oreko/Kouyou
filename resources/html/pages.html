@@ -1,0 +1,12 @@
+{% extends "templates/base.html" %}
+{% block styles %}
+{% style "/css/pages.css" %}
+{% endblock %}
+{% block title %}
+{{title}}
+{% endblock %}
+{% block content %}
+    <div class=content>
+        {{markdown|markdown}}
+    </div>
+{% endblock %}
